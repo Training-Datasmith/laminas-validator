@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Laminas\Validator\File;
 
+use function is_string;
+
 use Laminas\Translator\TranslatorInterface;
 use Laminas\Validator\AbstractValidator;
-use Laminas\Validator\Exception\InvalidArgumentException;
 
-use function is_string;
+use Laminas\Validator\Exception\InvalidArgumentException;
 
 /**
  * Validator for the maximum size of a file

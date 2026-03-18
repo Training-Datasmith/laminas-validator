@@ -30,7 +30,7 @@ final class ValidatorPluginManagerFactoryTest extends TestCase
                     'test' => Digits::class,
                 ],
                 'factories' => [
-                    'test-too' => static fn(): ValidatorInterface => $validator,
+                    'test-too' => static fn (): ValidatorInterface => $validator,
                 ],
             ],
         ];

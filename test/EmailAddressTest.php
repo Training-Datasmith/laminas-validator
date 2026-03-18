@@ -4,7 +4,18 @@ declare(strict_types=1);
 
 namespace LaminasTest\Validator;
 
+use function array_key_exists;
+use function array_values;
+use function checkdnsrr;
+use function count;
+
 use Generator;
+
+use function implode;
+use function json_encode;
+
+use const JSON_THROW_ON_ERROR;
+
 use Laminas\Validator\EmailAddress;
 use Laminas\Validator\Hostname;
 use LaminasTest\Validator\TestAsset\Translator;
@@ -13,17 +24,10 @@ use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
-use function array_key_exists;
-use function array_values;
-use function checkdnsrr;
-use function count;
-use function implode;
-use function json_encode;
 use function preg_replace;
 use function sprintf;
-use function str_repeat;
 
-use const JSON_THROW_ON_ERROR;
+use function str_repeat;
 
 final class EmailAddressTest extends TestCase
 {

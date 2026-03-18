@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Laminas\Validator;
 
-use Closure;
+use function array_replace_recursive;
+use function assert;
+
 use Laminas\ServiceManager\AbstractSingleInstancePluginManager;
 use Laminas\ServiceManager\Factory\InvokableFactory;
 use Laminas\ServiceManager\ServiceManager;
+
 use Laminas\Translator\TranslatorInterface;
 use Psr\Container\ContainerInterface;
-
-use function array_replace_recursive;
-use function assert;
 
 /**
  * @psalm-import-type ServiceManagerConfiguration from ServiceManager

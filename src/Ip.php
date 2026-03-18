@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Laminas\Validator;
 
-use Laminas\Translator\TranslatorInterface;
-
 use function bindec;
+
 use function hexdec;
 use function ip2long;
 use function is_string;
+
+use Laminas\Translator\TranslatorInterface;
+
 use function long2ip;
 use function preg_match;
 use function sprintf;

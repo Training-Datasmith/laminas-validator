@@ -4,14 +4,18 @@ declare(strict_types=1);
 
 namespace Laminas\Validator;
 
+use function array_key_exists;
+
 use DateTimeZone;
+
+use function in_array;
+
+use function is_int;
+use function is_string;
+
 use Laminas\Translator\TranslatorInterface;
 use Laminas\Validator\Exception\InvalidArgumentException;
 
-use function array_key_exists;
-use function in_array;
-use function is_int;
-use function is_string;
 use function strtolower;
 
 /**

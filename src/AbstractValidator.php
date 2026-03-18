@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace Laminas\Validator;
 
-use Laminas\Translator\TranslatorInterface;
-use Laminas\Validator\Exception\InvalidArgumentException;
-
 use function array_key_exists;
 use function array_keys;
+
 use function array_unique;
 use function assert;
 use function implode;
@@ -17,16 +15,22 @@ use function is_bool;
 use function is_object;
 use function is_string;
 use function key;
+
+use Laminas\Translator\TranslatorInterface;
+use Laminas\Validator\Exception\InvalidArgumentException;
+
 use function method_exists;
 use function property_exists;
+
+use const SORT_REGULAR;
+
 use function sprintf;
 use function str_repeat;
 use function str_replace;
 use function strlen;
 use function substr;
-use function var_export;
 
-use const SORT_REGULAR;
+use function var_export;
 
 /**
  * @psalm-type AbstractOptions = array{

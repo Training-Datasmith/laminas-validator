@@ -4,15 +4,17 @@ declare(strict_types=1);
 
 namespace Laminas\Validator\File;
 
+use function hash_algos;
+use function hash_equals;
+use function hash_file;
+
+use function in_array;
+use function is_string;
+
 use Laminas\Translator\TranslatorInterface;
 use Laminas\Validator\AbstractValidator;
 use Laminas\Validator\Exception\InvalidArgumentException;
 
-use function hash_algos;
-use function hash_equals;
-use function hash_file;
-use function in_array;
-use function is_string;
 use function strtolower;
 
 /**

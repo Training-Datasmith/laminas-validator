@@ -7,9 +7,11 @@ namespace LaminasTest\Validator\Sitemap;
 use Laminas\Validator\Sitemap\Loc;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use stdClass;
 
 use function reset;
+
+use stdClass;
+
 use function str_repeat;
 
 final class LocTest extends TestCase

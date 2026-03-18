@@ -4,16 +4,19 @@ declare(strict_types=1);
 
 namespace LaminasTest\Validator;
 
+use function chr;
+
+use const E_WARNING;
+
 use Laminas\Validator\Exception\InvalidArgumentException;
 use Laminas\Validator\StringLength;
+
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-use function chr;
 use function restore_error_handler;
-use function set_error_handler;
 
-use const E_WARNING;
+use function set_error_handler;
 
 final class StringLengthTest extends TestCase
 {
@@ -89,7 +92,7 @@ final class StringLengthTest extends TestCase
          * Warnings are silenced to prevent the test from failing
          */
         // phpcs:disable
-        set_error_handler(fn(int $_a, string $_b): bool => true, E_WARNING);
+        set_error_handler(fn (int $_a, string $_b): bool => true, E_WARNING);
         // phpcs:enable
 
         $malformed = chr(0xED) . chr(0xA0) . chr(0x80);

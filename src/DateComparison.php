@@ -4,15 +4,19 @@ declare(strict_types=1);
 
 namespace Laminas\Validator;
 
+use function assert;
+
 use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
+
+use function get_debug_type;
+
+use function is_string;
+
 use Laminas\Translator\TranslatorInterface;
 use Laminas\Validator\Exception\InvalidArgumentException;
 
-use function assert;
-use function get_debug_type;
-use function is_string;
 use function preg_match;
 
 /**

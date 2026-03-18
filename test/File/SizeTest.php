@@ -4,16 +4,18 @@ declare(strict_types=1);
 
 namespace LaminasTest\Validator\File;
 
+use function basename;
+use function chmod;
+use function filesize;
+
 use Laminas\Diactoros\UploadedFile;
 use Laminas\Validator\Exception\InvalidArgumentException;
 use Laminas\Validator\File\Size;
+
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
-use function basename;
-use function chmod;
-use function filesize;
 use function touch;
 use function unlink;
 

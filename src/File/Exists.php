@@ -4,23 +4,27 @@ declare(strict_types=1);
 
 namespace Laminas\Validator\File;
 
-use Laminas\Translator\TranslatorInterface;
-use Laminas\Validator\AbstractValidator;
-
 use function array_filter;
 use function array_map;
+
 use function array_values;
 use function count;
+
+use const DIRECTORY_SEPARATOR;
+
 use function explode;
 use function file_exists;
 use function implode;
 use function is_string;
+
+use Laminas\Translator\TranslatorInterface;
+use Laminas\Validator\AbstractValidator;
+
 use function ltrim;
 use function rtrim;
 use function sprintf;
-use function trim;
 
-use const DIRECTORY_SEPARATOR;
+use function trim;
 
 /**
  * Validator which checks if the file already exists in the directory

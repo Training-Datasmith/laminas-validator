@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace LaminasTest\Validator;
 
+use function json_encode;
+
 use Laminas\ServiceManager\ServiceManager;
 use Laminas\Validator\IsJsonString;
 use Laminas\Validator\ValidatorPluginManager;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\TestCase;
 
-use function json_encode;
+use PHPUnit\Framework\TestCase;
 
 final class IsJsonStringTest extends TestCase
 {

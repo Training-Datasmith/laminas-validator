@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace Laminas\Validator\File;
 
-use Laminas\Translator\TranslatorInterface;
-use Laminas\Validator\AbstractValidator;
-use Laminas\Validator\Exception\InvalidArgumentException;
-use Psr\Http\Message\UploadedFileInterface;
-
 use function in_array;
 use function is_array;
 use function is_string;
+
+use Laminas\Translator\TranslatorInterface;
+
+use Laminas\Validator\AbstractValidator;
+use Laminas\Validator\Exception\InvalidArgumentException;
+use Psr\Http\Message\UploadedFileInterface;
 
 /**
  * Validate the cumulative size of multiple files

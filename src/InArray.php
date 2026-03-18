@@ -4,17 +4,18 @@ declare(strict_types=1);
 
 namespace Laminas\Validator;
 
-use Laminas\Translator\TranslatorInterface;
-use Laminas\Validator\Exception\InvalidArgumentException;
-use RecursiveArrayIterator;
-use RecursiveIteratorIterator;
-
 use function in_array;
 use function is_array;
 use function is_bool;
 use function is_float;
+
 use function is_int;
 use function is_string;
+
+use Laminas\Translator\TranslatorInterface;
+use Laminas\Validator\Exception\InvalidArgumentException;
+use RecursiveArrayIterator;
+use RecursiveIteratorIterator;
 
 /**
  * @psalm-type OptionsArgument = array{

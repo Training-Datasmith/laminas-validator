@@ -4,16 +4,18 @@ declare(strict_types=1);
 
 namespace Laminas\Validator;
 
+use function class_exists;
+use function implode;
+use function is_a;
+use function is_array;
+
+use function is_string;
+
 use Laminas\Translator\TranslatorInterface;
 use Laminas\Validator\Barcode\AdapterInterface;
 use Laminas\Validator\Barcode\Ean13;
 use Laminas\Validator\Exception\InvalidArgumentException;
 
-use function class_exists;
-use function implode;
-use function is_a;
-use function is_array;
-use function is_string;
 use function sprintf;
 use function strtolower;
 use function ucfirst;

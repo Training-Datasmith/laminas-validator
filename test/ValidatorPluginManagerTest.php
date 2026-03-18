@@ -4,7 +4,12 @@ declare(strict_types=1);
 
 namespace LaminasTest\Validator;
 
+use function assert;
+
 use Exception;
+
+use function is_scalar;
+
 use Laminas\ServiceManager\Exception\InvalidServiceException;
 use Laminas\ServiceManager\Factory\InvokableFactory;
 use Laminas\ServiceManager\ServiceManager;
@@ -19,11 +24,10 @@ use Laminas\Validator\ValidatorPluginManager;
 use Laminas\Validator\ValidatorPluginManagerAwareInterface;
 use LaminasTest\Validator\TestAsset\InMemoryContainer;
 use LaminasTest\Validator\TestAsset\Translator;
+
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
-use function assert;
-use function is_scalar;
 use function sprintf;
 
 final class ValidatorPluginManagerTest extends TestCase
@@ -156,8 +160,7 @@ final class ValidatorPluginManagerTest extends TestCase
 
     public function testInjectedValidatorPluginManager(): void
     {
-        $validator = new class implements ValidatorInterface, ValidatorPluginManagerAwareInterface
-        {
+        $validator = new class () implements ValidatorInterface, ValidatorPluginManagerAwareInterface {
             private ?ValidatorPluginManager $plugins = null;
 
             public function isValid(mixed $value): bool

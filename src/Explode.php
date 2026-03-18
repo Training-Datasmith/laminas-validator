@@ -4,14 +4,16 @@ declare(strict_types=1);
 
 namespace Laminas\Validator;
 
+use function explode;
+use function implode;
+use function is_array;
+
+use function is_string;
+
 use Laminas\ServiceManager\ServiceManager;
 use Laminas\Translator\TranslatorInterface;
 use Laminas\Validator\Exception\RuntimeException;
 
-use function explode;
-use function implode;
-use function is_array;
-use function is_string;
 use function sprintf;
 
 /**

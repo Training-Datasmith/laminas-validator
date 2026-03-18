@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace LaminasTest\Validator;
 
+use function assert;
+
 use AssertionError;
 use Exception;
 use Laminas\Validator\Callback;
 use Laminas\Validator\Exception\InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use Throwable;
 
-use function assert;
+use Throwable;
 
 final class CallbackTest extends TestCase
 {
@@ -56,7 +57,7 @@ final class CallbackTest extends TestCase
         $givenContext = ['baz' => 'bat'];
         $validator    = new Callback([
             'throwExceptions' => true,
-            'callback'        => static fn(mixed $value, array $context, string $foo): bool
+            'callback'        => static fn (mixed $value, array $context, string $foo): bool
                 => $value === 'test' && $foo === 'foo' && $context === $givenContext,
             'callbackOptions' => ['foo' => 'foo'],
         ]);
@@ -69,7 +70,7 @@ final class CallbackTest extends TestCase
         $givenContext = ['baz' => 'bat'];
         $validator    = new Callback([
             'throwExceptions' => true,
-            'callback'        => static fn(mixed $value, array $context): bool
+            'callback'        => static fn (mixed $value, array $context): bool
                 => $value === 'test' && $context === $givenContext,
             'callbackOptions' => [],
         ]);

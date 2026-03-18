@@ -4,18 +4,20 @@ declare(strict_types=1);
 
 namespace Laminas\Validator\File;
 
-use Laminas\Translator\TranslatorInterface;
-use Laminas\Validator\AbstractValidator;
-use Laminas\Validator\Exception\InvalidArgumentException;
-
 use function array_filter;
 use function array_map;
 use function array_merge;
+
 use function array_unique;
 use function array_values;
 use function explode;
 use function in_array;
 use function is_string;
+
+use Laminas\Translator\TranslatorInterface;
+use Laminas\Validator\AbstractValidator;
+use Laminas\Validator\Exception\InvalidArgumentException;
+
 use function trim;
 
 /**

@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Laminas\Validator;
 
+use function is_array;
+use function is_string;
+
 use Laminas\Translator\TranslatorInterface;
 use Laminas\Validator\Exception\InvalidArgumentException;
 
-use function is_array;
-use function is_string;
 use function parse_url;
 
 /**

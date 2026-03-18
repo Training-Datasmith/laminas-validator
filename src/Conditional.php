@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace Laminas\Validator;
 
 use Closure;
-use Laminas\Validator\Exception\InvalidArgumentException;
 
 use function is_callable;
+
+use Laminas\Validator\Exception\InvalidArgumentException;
 
 /**
  * @psalm-import-type ValidatorSpecification from ValidatorInterface

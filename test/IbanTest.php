@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace LaminasTest\Validator;
 
+use function array_merge;
+use function implode;
+
 use Laminas\Validator\Exception\InvalidArgumentException;
 use Laminas\Validator\Iban as IbanValidator;
 use PHPUnit\Framework\Attributes\DataProvider;
+
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
-
-use function array_merge;
-use function implode;
 
 final class IbanTest extends TestCase
 {

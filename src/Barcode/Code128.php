@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Laminas\Validator\Barcode;
 
+use function assert;
+use function chr;
+
+use function is_string;
+
 use Laminas\Stdlib\StringUtils;
 use Laminas\Stdlib\StringWrapper\StringWrapperInterface;
 
-use function assert;
-use function chr;
-use function is_string;
 use function ord;
 
 final readonly class Code128 implements AdapterInterface
@@ -64,28 +66,28 @@ final readonly class Code128 implements AdapterInterface
                 case 'é':
                     break;
 
-                // Switch to C
+                    // Switch to C
                 case 'â':
                     $set = 'C';
                     break;
 
-                // Switch to B
+                    // Switch to B
                 case 'ä':
                     $set = 'B';
                     break;
 
-                // Switch to A
+                    // Switch to A
                 case 'à':
                     $set = 'A';
                     break;
 
-                // Doubled start character
+                    // Doubled start character
                 case '‡':
                 case 'ˆ':
                 case '‰':
                     return false;
 
-                // Chars after the stop character
+                    // Chars after the stop character
                 case 'Š':
                     break 2;
 
@@ -148,19 +150,19 @@ final readonly class Code128 implements AdapterInterface
                     $sum += $pos * $this->ord128($char, $set);
                     break;
 
-                // Switch to C
+                    // Switch to C
                 case 'â':
                     $sum += $pos * $this->ord128($char, $set);
                     $set  = 'C';
                     break;
 
-                // Switch to B
+                    // Switch to B
                 case 'ä':
                     $sum += $pos * $this->ord128($char, $set);
                     $set  = 'B';
                     break;
 
-                // Switch to A
+                    // Switch to A
                 case 'à':
                     $sum += $pos * $this->ord128($char, $set);
                     $set  = 'A';

@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Laminas\Validator\File;
 
+use function assert;
+use function file_get_contents;
+use function is_string;
+
 use Laminas\Translator\TranslatorInterface;
 use Laminas\Validator\AbstractValidator;
 use Laminas\Validator\Exception\InvalidArgumentException;
 
-use function assert;
-use function file_get_contents;
-use function is_string;
 use function str_word_count;
 
 /**

@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace LaminasTest\Validator;
 
-use Laminas\Validator\Exception\InvalidArgumentException;
-use Laminas\Validator\StringLength;
-use PHPUnit\Framework\TestCase;
-
 use function array_keys;
 use function current;
+
+use Laminas\Validator\Exception\InvalidArgumentException;
+
+use Laminas\Validator\StringLength;
+use PHPUnit\Framework\TestCase;
 
 final class MessageTest extends TestCase
 {

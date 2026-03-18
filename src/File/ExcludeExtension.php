@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace Laminas\Validator\File;
 
-use Laminas\Translator\TranslatorInterface;
-use Laminas\Validator\AbstractValidator;
-
 use function assert;
 use function implode;
+
 use function is_string;
+
+use Laminas\Translator\TranslatorInterface;
+use Laminas\Validator\AbstractValidator;
 
 /**
  * Validator for the excluding file extensions

@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace LaminasTest\Validator\File;
 
+use function basename;
+use function chmod;
+
 use Laminas\Validator\File\ExcludeMimeType;
 use Laminas\Validator\File\MimeType;
+
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-use function basename;
-use function chmod;
 use function touch;
 use function unlink;
 

@@ -4,18 +4,22 @@ declare(strict_types=1);
 
 namespace Laminas\Validator;
 
+use function assert;
+
 use BackedEnum;
+
+use function get_debug_type;
+use function is_a;
+use function is_int;
+
+use function is_scalar;
+use function is_string;
+
 use Laminas\Translator\TranslatorInterface;
 use Laminas\Validator\Exception\InvalidArgumentException;
 use ReflectionEnum;
 use ReflectionNamedType;
 
-use function assert;
-use function get_debug_type;
-use function is_a;
-use function is_int;
-use function is_scalar;
-use function is_string;
 use function sprintf;
 
 /**

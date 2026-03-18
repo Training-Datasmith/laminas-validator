@@ -4,30 +4,36 @@ declare(strict_types=1);
 
 namespace Laminas\Validator;
 
-use DateInterval;
-use DateTime;
-use DateTimeImmutable;
-use DateTimeInterface;
-use DateTimeZone;
-use Laminas\Translator\TranslatorInterface;
-use Laminas\Validator\Exception\InvalidArgumentException;
-
 use function array_combine;
 use function array_count_values;
 use function array_map;
 use function ceil;
+
+use DateInterval;
+use DateTime;
+use DateTimeImmutable;
+
+use DateTimeInterface;
+use DateTimeZone;
+
 use function explode;
 use function floor;
 use function in_array;
 use function is_array;
 use function is_string;
+
+use Laminas\Translator\TranslatorInterface;
+use Laminas\Validator\Exception\InvalidArgumentException;
+
 use function max;
 use function min;
-use function preg_match;
-use function sprintf;
-use function str_starts_with;
 
 use const PHP_INT_MAX;
+
+use function preg_match;
+use function sprintf;
+
+use function str_starts_with;
 
 /**
  * @psalm-type OptionsArgument = array{

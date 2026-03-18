@@ -4,14 +4,16 @@ declare(strict_types=1);
 
 namespace Laminas\Validator;
 
+use function array_filter;
+use function explode;
+use function is_string;
+
 use Psr\Http\Client\ClientExceptionInterface;
+
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use SensitiveParameter;
 
-use function array_filter;
-use function explode;
-use function is_string;
 use function sha1;
 use function strcmp;
 use function strtoupper;

@@ -12,9 +12,11 @@ use LaminasTest\Validator\TestAsset\Translator;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
-use stdClass;
 
 use function reset;
+
+use stdClass;
+
 use function var_export;
 
 final class AbstractValidatorTest extends TestCase

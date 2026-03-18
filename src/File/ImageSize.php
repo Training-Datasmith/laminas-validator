@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace Laminas\Validator\File;
 
-use Laminas\Translator\TranslatorInterface;
-use Laminas\Validator\AbstractValidator;
-use Laminas\Validator\Exception\InvalidArgumentException;
-
 use function count;
 use function getimagesize;
+
+use Laminas\Translator\TranslatorInterface;
+
+use Laminas\Validator\AbstractValidator;
+use Laminas\Validator\Exception\InvalidArgumentException;
 
 /**
  * Validator for the image size of an image file

@@ -4,20 +4,23 @@ declare(strict_types=1);
 
 namespace LaminasTest\Validator\File;
 
+use function basename;
+use function chmod;
+use function filesize;
+use function json_encode;
+
+use const JSON_THROW_ON_ERROR;
+
 use Laminas\Validator\Exception\InvalidArgumentException;
 use Laminas\Validator\File\FilesSize;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-use function basename;
-use function chmod;
-use function filesize;
-use function json_encode;
 use function reset;
 use function touch;
+
 use function unlink;
 
-use const JSON_THROW_ON_ERROR;
 use const UPLOAD_ERR_NO_FILE;
 
 /** @psalm-import-type OptionsArgument from FilesSize */

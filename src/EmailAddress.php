@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Laminas\Validator;
 
-use Laminas\Translator\TranslatorInterface;
-use UConverter;
-
 use function array_combine;
 use function array_filter;
+
+use const ARRAY_FILTER_USE_BOTH;
+
 use function array_flip;
 use function array_key_exists;
 use function array_keys;
@@ -17,15 +17,21 @@ use function checkdnsrr;
 use function gethostbynamel;
 use function getmxrr;
 use function idn_to_ascii;
+
+use const INTL_IDNA_VARIANT_UTS46;
+
 use function is_array;
 use function is_string;
+
+use Laminas\Translator\TranslatorInterface;
+
 use function preg_match;
 use function str_contains;
 use function strlen;
+
 use function trim;
 
-use const ARRAY_FILTER_USE_BOTH;
-use const INTL_IDNA_VARIANT_UTS46;
+use UConverter;
 
 /**
  * @psalm-type Options = array{
@@ -58,15 +64,15 @@ final class EmailAddress extends AbstractValidator
 
     /** @var array<string, string> */
     protected array $messageTemplates = [
-        self::INVALID            => "Invalid type given. String expected",
-        self::INVALID_FORMAT     => "The input is not a valid email address. Use the basic format local-part@hostname",
+        self::INVALID            => 'Invalid type given. String expected',
+        self::INVALID_FORMAT     => 'The input is not a valid email address. Use the basic format local-part@hostname',
         self::INVALID_HOSTNAME   => "'%hostname%' is not a valid hostname for the email address",
         self::INVALID_MX_RECORD  => "'%hostname%' does not appear to have any valid MX or A records for the email address",
         self::INVALID_SEGMENT    => "'%hostname%' is not in a routable network segment. The email address should not be resolved from public network",
         self::DOT_ATOM           => "'%localPart%' can not be matched against dot-atom format",
         self::QUOTED_STRING      => "'%localPart%' can not be matched against quoted-string format",
         self::INVALID_LOCAL_PART => "'%localPart%' is not a valid local part for the email address",
-        self::LENGTH_EXCEEDED    => "The input exceeds the allowed length",
+        self::LENGTH_EXCEEDED    => 'The input exceeds the allowed length',
     ];
 
     // phpcs:enable

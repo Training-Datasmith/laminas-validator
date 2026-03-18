@@ -4,19 +4,22 @@ declare(strict_types=1);
 
 namespace LaminasTest\Validator\File;
 
+use function basename;
+
+use const FILEINFO_MIME_TYPE;
+
+use function finfo_file;
+use function finfo_open;
+use function in_array;
+
+use function is_array;
+
 use Laminas\Validator\File\IsCompressed;
 use Laminas\Validator\File\MimeType;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
+
 use PHPUnit\Framework\TestCase;
-
-use function basename;
-use function finfo_file;
-use function finfo_open;
-use function in_array;
-use function is_array;
-
-use const FILEINFO_MIME_TYPE;
 
 /** @psalm-import-type OptionsArgument from MimeType */
 final class IsCompressedTest extends TestCase

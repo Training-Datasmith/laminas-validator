@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Laminas\Validator;
 
-use Laminas\Translator\TranslatorInterface;
-use Laminas\Validator\Exception\InvalidArgumentException;
-
 use function count;
 use function is_countable;
+
+use Laminas\Translator\TranslatorInterface;
+use Laminas\Validator\Exception\InvalidArgumentException;
 
 /**
  * Validate that a value is countable and the count meets expectations.

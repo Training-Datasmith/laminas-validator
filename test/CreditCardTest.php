@@ -116,7 +116,7 @@ final class CreditCardTest extends TestCase
     {
         // phpcs:disable WebimpressCodingStandard.NamingConventions
         $validator = new CreditCard([
-            'service' => static fn(mixed $_): bool => false,
+            'service' => static fn (mixed $_): bool => false,
         ]);
 
         self::assertSame($expected, $validator->isValid($input));
@@ -145,7 +145,7 @@ final class CreditCardTest extends TestCase
         // phpcs:disable WebimpressCodingStandard.NamingConventions
         $validator = new CreditCard([
             'type'    => CreditCard::VISA,
-            'service' => static fn(mixed $_): bool => false,
+            'service' => static fn (mixed $_): bool => false,
         ]);
 
         self::assertSame($expected, $validator->isValid($input));

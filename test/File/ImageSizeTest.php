@@ -4,17 +4,19 @@ declare(strict_types=1);
 
 namespace LaminasTest\Validator\File;
 
+use function array_merge;
+use function basename;
+use function chmod;
+use function file_exists;
+
 use Laminas\Diactoros\UploadedFile;
 use Laminas\Validator\Exception\InvalidArgumentException;
+
 use Laminas\Validator\File\ImageSize;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
-use function array_merge;
-use function basename;
-use function chmod;
-use function file_exists;
 use function touch;
 use function unlink;
 

@@ -4,15 +4,18 @@ declare(strict_types=1);
 
 namespace Laminas\Validator;
 
+use function assert;
+
 use Closure;
 use Exception;
-use Laminas\Translator\TranslatorInterface;
-use Laminas\Validator\Exception\InvalidArgumentException;
 
-use function assert;
 use function is_array;
+
 use function is_bool;
 use function is_callable;
+
+use Laminas\Translator\TranslatorInterface;
+use Laminas\Validator\Exception\InvalidArgumentException;
 
 /**
  * @psalm-type OptionsArgument = array{

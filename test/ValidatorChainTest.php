@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace LaminasTest\Validator;
 
+use function array_keys;
+use function array_shift;
+use function iterator_to_array;
+
 use Laminas\ServiceManager\ServiceManager;
 use Laminas\Validator\AbstractValidator;
 use Laminas\Validator\Callback;
@@ -16,13 +20,11 @@ use Laminas\Validator\ValidatorChain;
 use Laminas\Validator\ValidatorInterface;
 use Laminas\Validator\ValidatorPluginManager;
 use PHPUnit\Framework\Attributes\DataProvider;
+
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-use function array_keys;
-use function array_shift;
-use function iterator_to_array;
 use function serialize;
 use function unserialize;
 
@@ -229,13 +231,13 @@ final class ValidatorChainTest extends TestCase
     public function testCanAttachMultipleValidatorsOfTheSameTypeAsDiscreteInstances(): void
     {
         $this->validator->attachByName(Callback::class, [
-            'callback' => static fn(): bool => true,
+            'callback' => static fn (): bool => true,
             'messages' => [
                 Callback::INVALID_VALUE => 'This should not be seen in the messages',
             ],
         ]);
         $this->validator->attachByName(Callback::class, [
-            'callback' => static fn(): bool => false,
+            'callback' => static fn (): bool => false,
             'messages' => [
                 Callback::INVALID_VALUE => 'Second callback trapped',
             ],

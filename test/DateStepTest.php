@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace LaminasTest\Validator;
 
+use function date;
+
 use DateInterval;
 use DateTime;
 use DateTimeImmutable;
@@ -11,9 +13,8 @@ use DateTimeInterface;
 use Laminas\Validator\DateStep;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use ReflectionMethod;
 
-use function date;
+use ReflectionMethod;
 
 final class DateStepTest extends TestCase
 {

@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Laminas\Validator;
 
-use Laminas\Translator\TranslatorInterface;
-
 use function is_float;
+
 use function is_numeric;
+
+use Laminas\Translator\TranslatorInterface;
 
 /**
  * @psalm-type OptionsArgument = array{

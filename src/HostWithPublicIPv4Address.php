@@ -6,19 +6,21 @@ namespace Laminas\Validator;
 
 use function assert;
 use function explode;
-use function filter_var;
-use function get_debug_type;
-use function gethostbynamel;
-use function ip2long;
-use function is_array;
-use function is_int;
-use function is_string;
 
 use const FILTER_FLAG_GLOBAL_RANGE;
 use const FILTER_FLAG_IPV4;
 use const FILTER_FLAG_NO_PRIV_RANGE;
 use const FILTER_FLAG_NO_RES_RANGE;
 use const FILTER_VALIDATE_IP;
+
+use function filter_var;
+use function get_debug_type;
+
+use function gethostbynamel;
+use function ip2long;
+use function is_array;
+use function is_int;
+use function is_string;
 
 final class HostWithPublicIPv4Address extends AbstractValidator
 {

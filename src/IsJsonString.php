@@ -4,19 +4,22 @@ declare(strict_types=1);
 
 namespace Laminas\Validator;
 
-use JsonException;
-use Laminas\Translator\TranslatorInterface;
-
 use function gettype;
 use function is_float;
+
 use function is_int;
 use function is_numeric;
 use function is_string;
 use function json_decode;
-use function str_starts_with;
 
 use const JSON_ERROR_DEPTH;
 use const JSON_THROW_ON_ERROR;
+
+use JsonException;
+
+use Laminas\Translator\TranslatorInterface;
+
+use function str_starts_with;
 
 /**
  * @psalm-type OptionsArgument = array{

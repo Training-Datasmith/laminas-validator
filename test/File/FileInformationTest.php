@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace LaminasTest\Validator\File;
 
+use function chmod;
+use function filesize;
+
 use Laminas\Diactoros\UploadedFile;
+
 use Laminas\Validator\File\FileInformation;
 use PHPUnit\Framework\TestCase;
 
-use function chmod;
-use function filesize;
 use function touch;
 use function unlink;
 

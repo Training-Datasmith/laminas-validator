@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Laminas\Validator;
 
-use Laminas\Translator\TranslatorInterface;
-use Laminas\Validator\Exception\InvalidArgumentException;
-
 use function class_exists;
+
+use Laminas\Translator\TranslatorInterface;
+
+use Laminas\Validator\Exception\InvalidArgumentException;
 
 /**
  * @psalm-type OptionsArgument = array{

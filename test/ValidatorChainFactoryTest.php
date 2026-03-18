@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace LaminasTest\Validator;
 
+use function iterator_to_array;
+
 use Laminas\ServiceManager\ServiceManager;
 use Laminas\Validator\NotEmpty;
 use Laminas\Validator\StringLength;
 use Laminas\Validator\ValidatorChainFactory;
 use Laminas\Validator\ValidatorPluginManager;
 use PHPUnit\Framework\TestCase;
-use Psr\Container\NotFoundExceptionInterface;
 
-use function iterator_to_array;
+use Psr\Container\NotFoundExceptionInterface;
 
 final class ValidatorChainFactoryTest extends TestCase
 {

@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace LaminasTest\Validator;
 
+use function assert;
+use function in_array;
+use function is_string;
+
 use Laminas\ServiceManager\AbstractSingleInstancePluginManager;
 use Laminas\ServiceManager\ServiceManager;
 use Laminas\ServiceManager\Test\CommonPluginManagerTrait;
@@ -28,13 +32,10 @@ use Laminas\Validator\KeyExists;
 use Laminas\Validator\NumberComparison;
 use Laminas\Validator\Regex;
 use Laminas\Validator\ValidatorInterface;
+
 use Laminas\Validator\ValidatorPluginManager;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
-
-use function assert;
-use function in_array;
-use function is_string;
 
 /** @psalm-import-type ServiceManagerConfiguration from ServiceManager */
 final class ValidatorPluginManagerCompatibilityTest extends TestCase

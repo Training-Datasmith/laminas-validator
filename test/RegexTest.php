@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace LaminasTest\Validator;
 
+use function implode;
+
 use Laminas\Validator\Exception\InvalidArgumentException;
 use Laminas\Validator\Regex;
 use PHPUnit\Framework\Attributes\DataProvider;
+
 use PHPUnit\Framework\TestCase;
 
-use function implode;
 use function restore_error_handler;
 use function set_error_handler;
 
@@ -117,9 +119,9 @@ final class RegexTest extends TestCase
     {
         return [
             'empty-string'             => ['', 'A regex pattern is required'],
-            'missing-pattern-key'      => [[], "A regex pattern is required"],
-            'pattern-key-not-string'   => [['pattern' => false], "A regex pattern is required"],
-            'pattern-key-empty-string' => [['pattern' => ''], "A regex pattern is required"],
+            'missing-pattern-key'      => [[], 'A regex pattern is required'],
+            'pattern-key-not-string'   => [['pattern' => false], 'A regex pattern is required'],
+            'pattern-key-empty-string' => [['pattern' => ''], 'A regex pattern is required'],
         ];
     }
 

@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace LaminasTest\Validator\File;
 
 use Laminas\Validator\File\Bytes;
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\TestCase;
 
 use const PHP_INT_MAX;
+
+use PHPUnit\Framework\Attributes\DataProvider;
+
+use PHPUnit\Framework\TestCase;
 
 /** @psalm-suppress InternalClass, InternalMethod, InternalProperty */
 final class BytesTest extends TestCase

@@ -1,14 +1,19 @@
-<?php // phpcs:disable SlevomatCodingStandard.Namespaces.UnusedUses.UnusedUse
+<?php
+
+declare(strict_types=1);
+// phpcs:disable SlevomatCodingStandard.Namespaces.UnusedUses.UnusedUse
 
 namespace LaminasTest\Validator\TestAsset;
 
-use Iterator;
-use ReturnTypeWillChange;
-
 use function current;
+
+use Iterator;
+
 use function key;
 use function next;
 use function reset;
+
+use ReturnTypeWillChange;
 
 final class CustomTraversable implements Iterator
 {

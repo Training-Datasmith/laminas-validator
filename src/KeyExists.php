@@ -4,15 +4,17 @@ declare(strict_types=1);
 
 namespace Laminas\Validator;
 
-use Laminas\Translator\TranslatorInterface;
-use Laminas\Validator\Exception\InvalidArgumentException;
-
 use function array_key_exists;
 use function gettype;
+
 use function is_int;
 use function is_iterable;
 use function is_string;
 use function iterator_to_array;
+
+use Laminas\Translator\TranslatorInterface;
+use Laminas\Validator\Exception\InvalidArgumentException;
+
 use function preg_match;
 
 /**

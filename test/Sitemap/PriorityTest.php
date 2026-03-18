@@ -6,9 +6,10 @@ namespace LaminasTest\Validator\Sitemap;
 
 use Laminas\Validator\Sitemap\Priority;
 use PHPUnit\Framework\TestCase;
-use stdClass;
 
 use function reset;
+
+use stdClass;
 
 final class PriorityTest extends TestCase
 {

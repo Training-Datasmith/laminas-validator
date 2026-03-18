@@ -18,7 +18,7 @@ if (! is_writable(LAMINAS_HOSTNAME_VALIDATOR_FILE)) {
 }
 
 if (! extension_loaded('intl')) {
-    printf("Error: ext-intl is required by this script%s", PHP_EOL);
+    printf('Error: ext-intl is required by this script%s', PHP_EOL);
     exit(1);
 }
 

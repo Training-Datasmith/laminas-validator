@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Laminas\Validator\Exception;
 
+use function get_debug_type;
+
 use InvalidArgumentException;
 
-use function get_debug_type;
 use function sprintf;
 
 final class InvalidSpecificationArrayException extends InvalidArgumentException implements ExceptionInterface

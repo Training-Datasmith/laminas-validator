@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace Laminas\Validator;
 
-use Countable;
-use Laminas\Translator\TranslatorInterface;
-
 use function array_search;
 use function assert;
+
 use function count;
+
+use Countable;
+
 use function in_array;
 use function is_array;
 use function is_bool;
@@ -17,6 +18,9 @@ use function is_float;
 use function is_int;
 use function is_object;
 use function is_string;
+
+use Laminas\Translator\TranslatorInterface;
+
 use function method_exists;
 use function preg_match;
 

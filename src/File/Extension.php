@@ -4,17 +4,19 @@ declare(strict_types=1);
 
 namespace Laminas\Validator\File;
 
-use Laminas\Translator\TranslatorInterface;
-use Laminas\Validator\AbstractValidator;
-use Laminas\Validator\Exception\InvalidArgumentException;
-
 use function array_reverse;
 use function array_shift;
 use function assert;
+
 use function end;
 use function explode;
 use function implode;
 use function is_string;
+
+use Laminas\Translator\TranslatorInterface;
+use Laminas\Validator\AbstractValidator;
+use Laminas\Validator\Exception\InvalidArgumentException;
+
 use function sprintf;
 use function strtolower;
 use function trim;

@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Laminas\Validator\Sitemap;
 
+use function html_entity_decode;
+use function htmlentities;
+
+use function is_string;
+
 use Laminas\Validator\AbstractValidator;
 use Laminas\Validator\Uri;
 
-use function html_entity_decode;
-use function htmlentities;
-use function is_string;
 use function str_replace;
 use function strlen;
 

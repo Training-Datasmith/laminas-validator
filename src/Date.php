@@ -7,10 +7,12 @@ namespace Laminas\Validator;
 use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
-use Laminas\Translator\TranslatorInterface;
 
 use function gettype;
+
 use function implode;
+
+use Laminas\Translator\TranslatorInterface;
 
 /**
  * Validates that a given value is a DateTimeInterface instance or can be converted into one.

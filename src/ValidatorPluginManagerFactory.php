@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Laminas\Validator;
 
-use Laminas\ServiceManager\ServiceManager;
-use Psr\Container\ContainerInterface;
-
 use function assert;
 use function is_array;
+
+use Laminas\ServiceManager\ServiceManager;
+use Psr\Container\ContainerInterface;
 
 /** @psalm-import-type ServiceManagerConfiguration from ServiceManager */
 final class ValidatorPluginManagerFactory

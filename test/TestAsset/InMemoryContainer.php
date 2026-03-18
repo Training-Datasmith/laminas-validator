@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace LaminasTest\Validator\TestAsset;
 
+use function array_key_exists;
+
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use RuntimeException;
 
-use function array_key_exists;
+use RuntimeException;
 
 final class InMemoryContainer implements ContainerInterface
 {

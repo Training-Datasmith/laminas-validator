@@ -4,23 +4,28 @@ declare(strict_types=1);
 
 namespace Laminas\Validator;
 
+use function array_replace;
+use function assert;
+use function count;
+
 use Countable;
+
+use function is_array;
+use function is_bool;
+
+use function is_int;
+use function is_string;
+
 use IteratorAggregate;
 use Laminas\ServiceManager\ServiceManager;
 use Laminas\Stdlib\PriorityQueue;
 use Laminas\Validator\Exception\InvalidSpecificationArrayException;
-use Traversable;
 
-use function array_replace;
-use function assert;
-use function count;
-use function is_array;
-use function is_bool;
-use function is_int;
-use function is_string;
 use function rsort;
 
 use const SORT_NUMERIC;
+
+use Traversable;
 
 /**
  * @psalm-type QueueElement = array{instance: ValidatorInterface, breakChainOnFailure: bool}

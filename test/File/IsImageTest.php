@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace LaminasTest\Validator\File;
 
+use function basename;
+
 use Laminas\Validator\File\IsImage;
 use Laminas\Validator\File\MimeType;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\TestCase;
 
-use function basename;
+use PHPUnit\Framework\TestCase;
 
 /** @psalm-import-type OptionsArgument from MimeType */
 final class IsImageTest extends TestCase

@@ -23,7 +23,7 @@ final class ConditionalFactoryTest extends TestCase
 
         $factory   = new ConditionalFactory();
         $validator = $factory->__invoke($container, 'Whatever', [
-            'rule'       => static fn(array $context): bool => ($context['trigger'] ?? null) === true,
+            'rule'       => static fn (array $context): bool => ($context['trigger'] ?? null) === true,
             'validators' => [
                 ['name' => NotEmpty::class],
             ],

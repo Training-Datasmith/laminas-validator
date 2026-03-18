@@ -4,18 +4,23 @@ declare(strict_types=1);
 
 namespace Laminas\Validator;
 
-use BackedEnum;
-use Laminas\Translator\TranslatorInterface;
-use Laminas\Validator\Exception\InvalidArgumentException;
-use UnitEnum;
-
 use function array_map;
+
+use BackedEnum;
+
 use function get_debug_type;
 use function in_array;
+
 use function is_a;
 use function is_scalar;
 use function is_string;
+
+use Laminas\Translator\TranslatorInterface;
+use Laminas\Validator\Exception\InvalidArgumentException;
+
 use function sprintf;
+
+use UnitEnum;
 
 /**
  * @psalm-type OptionsArgument = array{

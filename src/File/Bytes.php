@@ -8,12 +8,14 @@ use function assert;
 use function ctype_digit;
 use function is_numeric;
 use function is_string;
+
+use const PHP_INT_MAX;
+
 use function round;
 use function strtoupper;
 use function substr;
-use function trim;
 
-use const PHP_INT_MAX;
+use function trim;
 
 /**
  * @internal

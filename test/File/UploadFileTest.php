@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace LaminasTest\Validator\File;
 
+use function is_int;
+
 use Laminas\Validator\File\UploadFile;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
+
 use Psr\Http\Message\UploadedFileInterface;
 
-use function is_int;
 use function reset;
 use function sprintf;
 

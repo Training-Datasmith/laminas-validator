@@ -4,22 +4,25 @@ declare(strict_types=1);
 
 namespace Laminas\Validator;
 
-use Laminas\Translator\TranslatorInterface;
-use Laminas\Validator\Exception\InvalidArgumentException;
-use SensitiveParameter;
-use Throwable;
-
 use function constant;
 use function ctype_digit;
 use function defined;
 use function floor;
+
 use function in_array;
 use function is_callable;
 use function is_string;
+
+use Laminas\Translator\TranslatorInterface;
+use Laminas\Validator\Exception\InvalidArgumentException;
+use SensitiveParameter;
+
 use function sprintf;
 use function str_starts_with;
 use function strlen;
 use function strtoupper;
+
+use Throwable;
 
 /**
  * @psalm-type OptionsArgument = array{

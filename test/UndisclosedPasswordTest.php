@@ -16,12 +16,16 @@ use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
-use ReflectionClass;
-use stdClass;
 
 use function random_int;
+
+use ReflectionClass;
+
 use function sha1;
 use function sprintf;
+
+use stdClass;
+
 use function strtoupper;
 use function substr;
 

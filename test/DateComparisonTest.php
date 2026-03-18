@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace LaminasTest\Validator;
 
+use function assert;
+
 use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
 use Laminas\Validator\DateComparison;
 use Laminas\Validator\Exception\InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\TestCase;
 
-use function assert;
+use PHPUnit\Framework\TestCase;
 
 final class DateComparisonTest extends TestCase
 {

@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Laminas\Validator\File;
 
+use function is_array;
+
 use Laminas\Translator\TranslatorInterface;
 use Laminas\Validator\AbstractValidator;
-use Laminas\Validator\Exception\InvalidArgumentException;
 
-use function is_array;
+use Laminas\Validator\Exception\InvalidArgumentException;
 
 /**
  * Validator for counting all given files

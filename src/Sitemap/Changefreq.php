@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Laminas\Validator\Sitemap;
 
-use Laminas\Validator\AbstractValidator;
-
 use function in_array;
+
 use function is_string;
+
+use Laminas\Validator\AbstractValidator;
 
 /**
  * Validates whether a given value is valid as a sitemap <changefreq> value

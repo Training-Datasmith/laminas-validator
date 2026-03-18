@@ -6,9 +6,10 @@ namespace LaminasTest\Validator\Sitemap;
 
 use Laminas\Validator\Sitemap\Changefreq;
 use PHPUnit\Framework\TestCase;
-use stdClass;
 
 use function reset;
+
+use stdClass;
 
 final class ChangefreqTest extends TestCase
 {

@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Laminas\Validator;
 
+use function floor;
+
+use function is_numeric;
+
 use Laminas\Translator\TranslatorInterface;
 
-use function floor;
-use function is_numeric;
 use function round;
 use function strlen;
 use function strpos;

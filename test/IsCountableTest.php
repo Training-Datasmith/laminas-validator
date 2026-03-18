@@ -4,16 +4,18 @@ declare(strict_types=1);
 
 namespace LaminasTest\Validator;
 
+use function json_encode;
+
+use const JSON_THROW_ON_ERROR;
+
 use Laminas\Validator\Exception;
 use Laminas\Validator\IsCountable;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+
 use SplQueue;
+
 use stdClass;
-
-use function json_encode;
-
-use const JSON_THROW_ON_ERROR;
 
 /** @psalm-import-type OptionsArgument from IsCountable */
 final class IsCountableTest extends TestCase

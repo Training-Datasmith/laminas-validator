@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace Laminas\Validator\File;
 
-use Laminas\Validator\AbstractValidator;
-use Psr\Http\Message\UploadedFileInterface;
-
 use function basename;
 use function is_array;
+
 use function is_file;
 use function is_int;
 use function is_string;
 use function is_uploaded_file;
+
+use Laminas\Validator\AbstractValidator;
+use Psr\Http\Message\UploadedFileInterface;
 
 use const UPLOAD_ERR_CANT_WRITE;
 use const UPLOAD_ERR_EXTENSION;

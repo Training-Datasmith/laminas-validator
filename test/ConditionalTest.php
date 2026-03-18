@@ -30,7 +30,7 @@ final class ConditionalTest extends TestCase
         $validator = new Conditional(
             $this->factory,
             [
-                'rule'       => static fn(array $context): bool => ($context['trigger'] ?? null) === true,
+                'rule'       => static fn (array $context): bool => ($context['trigger'] ?? null) === true,
                 'validators' => [
                     ['name' => NotEmpty::class],
                 ],
@@ -58,7 +58,7 @@ final class ConditionalTest extends TestCase
         $validator = new Conditional(
             $this->factory,
             [
-                'rule'       => static fn(array $context): bool => ($context['trigger'] ?? null) === true,
+                'rule'       => static fn (array $context): bool => ($context['trigger'] ?? null) === true,
                 'validators' => [
                     ['name' => Digits::class],
                 ],
@@ -97,7 +97,7 @@ final class ConditionalTest extends TestCase
         $plugins   = $container->get(ValidatorPluginManager::class);
         self::assertInstanceOf(ValidatorPluginManager::class, $plugins);
         $validator = $plugins->build(Conditional::class, [
-            'rule'       => static fn(array $context): bool => ($context['trigger'] ?? null) === true,
+            'rule'       => static fn (array $context): bool => ($context['trigger'] ?? null) === true,
             'validators' => [
                 ['name' => Digits::class],
             ],

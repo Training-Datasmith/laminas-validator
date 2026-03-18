@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Laminas\Validator\Sitemap;
 
-use Laminas\Validator\AbstractValidator;
-
 use function is_numeric;
+
+use Laminas\Validator\AbstractValidator;
 
 /**
  * Validates whether a given value is valid as a sitemap <priority> value

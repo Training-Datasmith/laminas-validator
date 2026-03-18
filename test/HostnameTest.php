@@ -4,16 +4,18 @@ declare(strict_types=1);
 
 namespace LaminasTest\Validator;
 
+use function array_key_exists;
+use function implode;
+use function ini_get;
+use function ini_set;
+
 use Laminas\Validator\Hostname;
+
 use LaminasTest\Validator\TestAsset\Translator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
-use function array_key_exists;
-use function implode;
-use function ini_get;
-use function ini_set;
 use function sprintf;
 
 final class HostnameTest extends TestCase

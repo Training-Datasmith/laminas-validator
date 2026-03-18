@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Laminas\Validator;
 
 use DateInterval;
-use Throwable;
 
 use function get_debug_type;
+
 use function is_string;
+
+use Throwable;
 
 final class DateIntervalString extends AbstractValidator
 {

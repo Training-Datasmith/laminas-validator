@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace LaminasTest\Validator\File;
 
-use Laminas\Diactoros\UploadedFile;
-use Laminas\Validator\File\NotExists;
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\TestCase;
-
 use function basename;
 use function dirname;
 use function implode;
+
+use Laminas\Diactoros\UploadedFile;
+use Laminas\Validator\File\NotExists;
+
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\TestCase;
 
 use const UPLOAD_ERR_OK;
 
