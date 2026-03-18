@@ -2092,7 +2092,7 @@ final class Hostname extends AbstractValidator
                     break;
                 }
 
-                $pos = (int) ($pos * (36 - $tag));
+                $pos = $pos * (36 - $tag);
             }
 
             $delta  = intval($init ? ($index - $oldIndex) / 700 : ($index - $oldIndex) / 2);

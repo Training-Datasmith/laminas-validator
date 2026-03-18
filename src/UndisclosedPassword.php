@@ -22,12 +22,8 @@ final class UndisclosedPassword extends AbstractValidator
     // phpcs:disable SlevomatCodingStandard.Classes.UnusedPrivateElements.UnusedConstant
 
     private const HIBP_API_URI                       = 'https://api.pwnedpasswords.com';
-    private const HIBP_API_REQUEST_TIMEOUT           = 300;
-    private const HIBP_CLIENT_USER_AGENT_STRING      = 'laminas-validator';
-    private const HIBP_CLIENT_ACCEPT_HEADER          = 'application/vnd.haveibeenpwned.v2+json';
     private const HIBP_K_ANONYMITY_HASH_RANGE_LENGTH = 5;
     private const HIBP_K_ANONYMITY_HASH_RANGE_BASE   = 0;
-    private const SHA1_STRING_LENGTH                 = 40;
 
     // phpcs:enable
 

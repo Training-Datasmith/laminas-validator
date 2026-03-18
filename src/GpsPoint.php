@@ -38,12 +38,12 @@ final class GpsPoint extends AbstractValidator
      */
     public function isValid(mixed $value): bool
     {
-        if (! str_contains($value, ',')) {
+        if (! str_contains((string) $value, ',')) {
             $this->error(self::INCOMPLETE_COORDINATE, $value);
             return false;
         }
 
-        [$lat, $long] = explode(',', $value);
+        [$lat, $long] = explode(',', (string) $value);
 
         return $this->isValidCoordinate($lat, 90.0000) && $this->isValidCoordinate($long, 180.000);
     }

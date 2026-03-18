@@ -213,7 +213,7 @@ abstract class AbstractValidator implements
 
         $length = self::$messageLength;
         if (($length > -1) && (strlen($message) > $length)) {
-            $message = substr($message, 0, $length - 3) . '...';
+            return substr($message, 0, $length - 3) . '...';
         }
 
         return $message;

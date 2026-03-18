@@ -20,10 +20,10 @@ use const PHP_INT_MAX;
  *
  * @psalm-immutable
  */
-final class Bytes
+final readonly class Bytes
 {
     private function __construct(
-        public readonly int $bytes,
+        public int $bytes,
     ) {
     }
 
@@ -70,11 +70,8 @@ final class Bytes
 
         switch (strtoupper($type)) {
             case 'Y':
-                //$value *= 1024 ** 8;
-                $value = PHP_INT_MAX;
-                break;
             case 'Z':
-                //$value *= 1024 ** 7;
+                //$value *= 1024 ** 8;
                 $value = PHP_INT_MAX;
                 break;
             case 'E':

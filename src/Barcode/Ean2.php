@@ -24,7 +24,7 @@ final class Ean2 implements AdapterInterface
         return true;
     }
 
-    public function getLength(): int|string|array|null
+    public function getLength(): int
     {
         return 2;
     }

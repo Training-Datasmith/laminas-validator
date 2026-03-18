@@ -88,19 +88,17 @@ final class Ip extends AbstractValidator
 
         if ($this->allowipv4 && $this->validateIPv4($value)) {
             return true;
-        } else {
-            if ($this->allowliteral) {
-                if (preg_match('/^\[(.*)\]$/', $value, $matches)) {
-                    $value = $matches[1];
-                }
+        }
+        if ($this->allowliteral) {
+            if (preg_match('/^\[(.*)\]$/', $value, $matches)) {
+                $value = $matches[1];
             }
-
-            if (
-                ($this->allowipv6 && $this->validateIPv6($value)) ||
-                ($this->allowipvfuture && $this->validateIPvFuture($value))
-            ) {
-                return true;
-            }
+        }
+        if (
+            ($this->allowipv6 && $this->validateIPv6($value)) ||
+            ($this->allowipvfuture && $this->validateIPvFuture($value))
+        ) {
+            return true;
         }
 
         $this->error(self::NOT_IP_ADDRESS);

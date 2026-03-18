@@ -28,7 +28,7 @@ final class Ean8 implements AdapterInterface
         return Util::gtin($value);
     }
 
-    public function getLength(): int|string|array|null
+    public function getLength(): array
     {
         return [7, 8];
     }

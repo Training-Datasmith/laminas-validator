@@ -294,11 +294,11 @@ final class EmailAddress extends AbstractValidator
             foreach ($this->hostnameValidator->getMessages() as $code => $message) {
                 $this->errorMessages[$code] = $message;
             }
-
             return false;
-        } elseif ($this->useMxCheck) {
+        }
+        if ($this->useMxCheck) {
             // MX check on hostname
-            $isValid = $this->validateMXRecords($hostname);
+            return $this->validateMXRecords($hostname);
         }
 
         return $isValid;

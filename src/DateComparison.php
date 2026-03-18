@@ -194,7 +194,7 @@ final class DateComparison extends AbstractValidator
 
     private function isoDateFromString(string $input): DateTimeImmutable|null
     {
-        if (! preg_match('/^\d{4}-[0-1]\d-[0-3]\d$/', $input)) {
+        if (! preg_match('/^\d{4}-[0-1]\d\-[0-3]\d$/', $input)) {
             return null;
         }
 
@@ -206,7 +206,7 @@ final class DateComparison extends AbstractValidator
 
     private function w3cDateFromString(string $input): DateTimeImmutable|null
     {
-        if (! preg_match('/^\d{4}-[0-1]\d-[0-3]\dT\d{1,2}:[0-5]\d:[0-5]\d$/', $input)) {
+        if (! preg_match('/^\d{4}-[0-1]\d\-[0-3]\dT\d{1,2}:[0-5]\d:[0-5]\d$/', $input)) {
             return null;
         }
 

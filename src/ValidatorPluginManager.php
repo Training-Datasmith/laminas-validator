@@ -225,8 +225,8 @@ final class ValidatorPluginManager extends AbstractSingleInstancePluginManager
         $config = array_replace_recursive(self::DEFAULT_CONFIGURATION, $config);
         parent::__construct($creationContext, $config);
 
-        $this->addInitializer(Closure::fromCallable([$this, 'injectTranslator']));
-        $this->addInitializer(Closure::fromCallable([$this, 'injectValidatorPluginManager']));
+        $this->addInitializer($this->injectTranslator(...));
+        $this->addInitializer($this->injectValidatorPluginManager(...));
     }
 
     /** @internal */

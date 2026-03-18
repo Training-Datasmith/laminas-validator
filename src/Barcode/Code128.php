@@ -12,9 +12,9 @@ use function chr;
 use function is_string;
 use function ord;
 
-final class Code128 implements AdapterInterface
+final readonly class Code128 implements AdapterInterface
 {
-    private readonly StringWrapperInterface $utf8StringWrapper;
+    private StringWrapperInterface $utf8StringWrapper;
 
     public function __construct()
     {
@@ -243,39 +243,41 @@ final class Code128 implements AdapterInterface
         if ($set === 'A') {
             if ($ord < 32) {
                 return $ord + 64;
-            } elseif ($ord < 96) {
-                return $ord - 32;
-            } elseif ($ord > 138) {
-                return -1;
-            } else {
+            }
+            if ($ord < 96) {
                 return $ord - 32;
             }
-        } elseif ($set === 'B') {
+            if ($ord > 138) {
+                return -1;
+            }
+            return $ord - 32;
+        }
+        if ($set === 'B') {
             if ($ord < 32) {
                 return -1;
-            } elseif ($ord <= 138) {
-                return $ord - 32;
-            } else {
-                return -1;
             }
-        } elseif ($set === 'C') {
+            if ($ord <= 138) {
+                return $ord - 32;
+            }
+            return -1;
+        }
+        if ($set === 'C') {
             $val = (int) $value;
             if (($val >= 0) && ($val <= 99)) {
                 return $val;
-            } elseif (($ord >= 132) && ($ord <= 138)) {
-                return $ord - 32;
-            } else {
-                return -1;
             }
-        } else {
-            if ($ord < 32) {
-                return $ord + 64;
-            } elseif ($ord <= 138) {
+            if (($ord >= 132) && ($ord <= 138)) {
                 return $ord - 32;
-            } else {
-                return -1;
             }
+            return -1;
         }
+        if ($ord < 32) {
+            return $ord + 64;
+        }
+        if ($ord <= 138) {
+            return $ord - 32;
+        }
+        return -1;
     }
 
     /**
@@ -301,35 +303,36 @@ final class Code128 implements AdapterInterface
         if ($set === 'A') {
             if ($value < 64) {
                 return chr($value + 32);
-            } elseif ($value < 96) {
-                return chr($value - 64);
-            } elseif ($value > 106) {
-                return -1;
-            } else {
-                return chr($value + 32);
             }
-        } elseif ($set === 'B') {
+            if ($value < 96) {
+                return chr($value - 64);
+            }
             if ($value > 106) {
                 return -1;
-            } else {
-                return chr($value + 32);
             }
-        } elseif ($set === 'C') {
+            return chr($value + 32);
+        }
+        if ($set === 'B') {
+            if ($value > 106) {
+                return -1;
+            }
+            return chr($value + 32);
+        }
+        if ($set === 'C') {
             if (($value >= 0) && ($value <= 9)) {
                 return '0' . $value;
-            } elseif ($value <= 99) {
+            }
+            if ($value <= 99) {
                 return (string) $value;
-            } elseif ($value <= 106) {
-                return chr($value + 32);
-            } else {
-                return -1;
             }
-        } else {
             if ($value <= 106) {
-                return $value + 32;
-            } else {
-                return -1;
+                return chr($value + 32);
             }
+            return -1;
         }
+        if ($value <= 106) {
+            return $value + 32;
+        }
+        return -1;
     }
 }

@@ -22,10 +22,11 @@ final class Issn implements AdapterInterface
      */
     public function hasValidCharacters(string $value): bool
     {
-        if (strlen($value) !== 8) {
-            if (str_contains($value, 'X')) {
-                return false;
-            }
+        if (strlen($value) === 8) {
+            return Util::stringMatchesAlphabet($value, self::ALPHABET);
+        }
+        if (str_contains($value, 'X')) {
+            return false;
         }
 
         return Util::stringMatchesAlphabet($value, self::ALPHABET);
