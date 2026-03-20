@@ -62,7 +62,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "LaminasTest\\Validator\\": "test/"
+            "Laminas_Test\\Validator\\": "test/"
         }
     },
     "scripts": {
