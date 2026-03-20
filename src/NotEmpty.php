@@ -1,16 +1,12 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Laminas\Validator;
 
 use function array_search;
 use function assert;
-
 use function count;
-
 use Countable;
-
 use function in_array;
 use function is_array;
 use function is_bool;
@@ -18,12 +14,9 @@ use function is_float;
 use function is_int;
 use function is_object;
 use function is_string;
-
-use Laminas\Translator\TranslatorInterface;
-
+use Laminas\Translator\Translator_Interface;
 use function method_exists;
 use function preg_match;
-
 /**
  * phpcs:disable Generic.Files.LineLength
  *
@@ -50,75 +43,44 @@ use function preg_match;
  *     valueObscured?: bool,
  * }
  */
-final class NotEmpty extends AbstractValidator
+final class Not_Empty extends Abstract_Validator
 {
-    public const BOOLEAN       = 0b000000000001;
-    public const INTEGER       = 0b000000000010;
-    public const FLOAT         = 0b000000000100;
-    public const STRING        = 0b000000001000;
-    public const ZERO          = 0b000000010000;
-    public const EMPTY_ARRAY   = 0b000000100000;
-    public const NULL          = 0b000001000000;
-    public const PHP           = 0b000001111111;
-    public const SPACE         = 0b000010000000;
-    public const OBJECT        = 0b000100000000;
-    public const OBJECT_STRING = 0b001000000000;
-    public const OBJECT_COUNT  = 0b010000000000;
-    public const ALL           = 0b011111111111;
-
-    public const INVALID  = 'notEmptyInvalid';
+    public const BOOLEAN = 0b1;
+    public const INTEGER = 0b10;
+    public const FLOAT = 0b100;
+    public const STRING = 0b1000;
+    public const ZERO = 0b10000;
+    public const EMPTY_ARRAY = 0b100000;
+    public const NULL = 0b1000000;
+    public const PHP = 0b1111111;
+    public const SPACE = 0b10000000;
+    public const OBJECT = 0b100000000;
+    public const OBJECT_STRING = 0b1000000000;
+    public const OBJECT_COUNT = 0b10000000000;
+    public const ALL = 0b11111111111;
+    public const INVALID = 'notEmptyInvalid';
     public const IS_EMPTY = 'isEmpty';
-
-    private const DEFAULT_TYPE = self::OBJECT
-        | self::SPACE
-        | self::NULL
-        | self::EMPTY_ARRAY
-        | self::STRING
-        | self::BOOLEAN;
-
-    private const TYPE_NAMES = [
-        self::BOOLEAN       => 'boolean',
-        self::INTEGER       => 'integer',
-        self::FLOAT         => 'float',
-        self::STRING        => 'string',
-        self::ZERO          => 'zero',
-        self::EMPTY_ARRAY   => 'array',
-        self::NULL          => 'null',
-        self::PHP           => 'php',
-        self::SPACE         => 'space',
-        self::OBJECT        => 'object',
-        self::OBJECT_STRING => 'objectstring',
-        self::OBJECT_COUNT  => 'objectcount',
-        self::ALL           => 'all',
-    ];
-
+    private const DEFAULT_TYPE = self::OBJECT | self::SPACE | self::NULL | self::EMPTY_ARRAY | self::STRING | self::BOOLEAN;
+    private const TYPE_NAMES = [self::BOOLEAN => 'boolean', self::INTEGER => 'integer', self::FLOAT => 'float', self::STRING => 'string', self::ZERO => 'zero', self::EMPTY_ARRAY => 'array', self::NULL => 'null', self::PHP => 'php', self::SPACE => 'space', self::OBJECT => 'object', self::OBJECT_STRING => 'objectstring', self::OBJECT_COUNT => 'objectcount', self::ALL => 'all'];
     /** @var array<string, string> */
-    protected array $messageTemplates = [
-        self::IS_EMPTY => "Value is required and can't be empty",
-        self::INVALID  => 'Invalid type given. String, integer, float, boolean or array expected',
-    ];
-
+    protected array $message_templates = [self::IS_EMPTY => "Value is required and can't be empty", self::INVALID => 'Invalid type given. String, integer, float, boolean or array expected'];
     /** @var TypeIntMask */
     private readonly int $type;
-
     /**
      * @param OptionsArgument $options
      */
     public function __construct(array $options = [])
     {
-        $type       = $options['type'] ?? self::DEFAULT_TYPE;
-        $this->type = $this->calculateTypeValue($type);
-
+        $type = $options['type'] ?? self::DEFAULT_TYPE;
+        $this->type = $this->calculate_type_value($type);
         unset($options['type']);
-
         parent::__construct($options);
     }
-
     /**
      * @param TypeArgument $type
      * @return TypeIntMask
      */
-    private function calculateTypeValue(array|int|string $type): int
+    private function calculate_type_value(array|int|string $type): int
     {
         if (is_array($type)) {
             $detected = 0;
@@ -129,63 +91,41 @@ final class NotEmpty extends AbstractValidator
                     $detected |= (int) array_search($value, self::TYPE_NAMES, true);
                 }
             }
-
             $type = $detected;
         } elseif (is_string($type) && in_array($type, self::TYPE_NAMES, true)) {
             $type = array_search($type, self::TYPE_NAMES, true);
         }
-
         assert(is_int($type) && ($type & self::ALL) !== 0);
-
         /** @psalm-var TypeIntMask $type */
-
         return $type;
     }
-
     /**
      * Returns true if and only if $value is not an empty value.
      */
-    public function isValid(mixed $value): bool
+    public function is_valid(mixed $value): bool
     {
-        if (
-            $value !== null
-            && ! is_string($value)
-            && ! is_int($value)
-            && ! is_float($value)
-            && ! is_bool($value)
-            && ! is_array($value)
-            && ! is_object($value)
-        ) {
+        if ($value !== null && !is_string($value) && !is_int($value) && !is_float($value) && !is_bool($value) && !is_array($value) && !is_object($value)) {
             $this->error(self::INVALID);
             return false;
         }
-
-        $this->setValue($value);
+        $this->set_value($value);
         $object = false;
-
         // OBJECT_COUNT (countable object)
         if ($this->type & self::OBJECT_COUNT) {
             $object = true;
-
-            if ($value instanceof Countable && (count($value) === 0)) {
+            if ($value instanceof Countable && count($value) === 0) {
                 $this->error(self::IS_EMPTY);
                 return false;
             }
         }
-
         // OBJECT_STRING (object's toString)
         if ($this->type & self::OBJECT_STRING) {
             $object = true;
-
-            if (
-                (is_object($value) && ! method_exists($value, '__toString'))
-                || (is_object($value) && (string) $value === '')
-            ) {
+            if (is_object($value) && !method_exists($value, '__toString') || is_object($value) && (string) $value === '') {
                 $this->error(self::IS_EMPTY);
                 return false;
             }
         }
-
         // OBJECT (object)
         // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedIf
         if ($this->type & self::OBJECT) {
@@ -197,15 +137,13 @@ final class NotEmpty extends AbstractValidator
                 return false;
             }
         }
-
         // SPACE ('   ')
         if ($this->type & self::SPACE) {
-            if (is_string($value) && (preg_match('/^\s+$/s', $value))) {
+            if (is_string($value) && preg_match('/^\s+$/s', $value)) {
                 $this->error(self::IS_EMPTY);
                 return false;
             }
         }
-
         // NULL (null)
         if ($this->type & self::NULL) {
             if ($value === null) {
@@ -213,7 +151,6 @@ final class NotEmpty extends AbstractValidator
                 return false;
             }
         }
-
         // EMPTY_ARRAY (array())
         if ($this->type & self::EMPTY_ARRAY) {
             if ($value === []) {
@@ -221,7 +158,6 @@ final class NotEmpty extends AbstractValidator
                 return false;
             }
         }
-
         // ZERO ('0')
         if ($this->type & self::ZERO) {
             if ($value === '0') {
@@ -229,7 +165,6 @@ final class NotEmpty extends AbstractValidator
                 return false;
             }
         }
-
         // STRING ('')
         if ($this->type & self::STRING) {
             if ($value === '') {
@@ -237,7 +172,6 @@ final class NotEmpty extends AbstractValidator
                 return false;
             }
         }
-
         // FLOAT (0.0)
         if ($this->type & self::FLOAT) {
             if ($value === 0.0) {
@@ -245,7 +179,6 @@ final class NotEmpty extends AbstractValidator
                 return false;
             }
         }
-
         // INTEGER (0)
         if ($this->type & self::INTEGER) {
             if ($value === 0) {
@@ -253,7 +186,6 @@ final class NotEmpty extends AbstractValidator
                 return false;
             }
         }
-
         // BOOLEAN (false)
         if ($this->type & self::BOOLEAN) {
             if ($value === false) {
@@ -261,10 +193,8 @@ final class NotEmpty extends AbstractValidator
                 return false;
             }
         }
-
         return true;
     }
-
     /**
      * Return the configured message templates
      *
@@ -278,8 +208,8 @@ final class NotEmpty extends AbstractValidator
      * @psalm-internal \Laminas
      * @return array<string, string>
      */
-    public function getMessageTemplates(): array
+    public function get_message_templates(): array
     {
-        return $this->messageTemplates;
+        return $this->message_templates;
     }
 }

@@ -1,15 +1,12 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Laminas\Validator;
 
 use Override;
-
-interface ValidatorChainInterface extends ValidatorInterface
+interface Validator_Chain_Interface extends Validator_Interface
 {
     public const DEFAULT_PRIORITY = 1;
-
     /**
      * Attach a validator to the end of the chain
      *
@@ -17,12 +14,7 @@ interface ValidatorChainInterface extends ValidatorInterface
      * @param bool $breakChainOnFailure If true, the chain's next validator will not be executed in case of failure
      * @param int $priority Priority at which to enqueue validator; defaults to 1 (higher executes earlier)
      */
-    public function attach(
-        ValidatorInterface $validator,
-        bool $breakChainOnFailure = false,
-        int $priority = self::DEFAULT_PRIORITY
-    ): void;
-
+    public function attach(Validator_Interface $validator, bool $break_chain_on_failure = false, int $priority = self::DEFAULT_PRIORITY): void;
     /**
      * Attach a validator to the chain using an alias or FQCN
      *
@@ -33,13 +25,7 @@ interface ValidatorChainInterface extends ValidatorInterface
      * @param bool $breakChainOnFailure If true, the chain's next validator will not be executed in case of failure
      * @param int $priority Priority at which to enqueue validator; defaults to 1 (higher executes earlier)
      */
-    public function attachByName(
-        string $name,
-        array $options = [],
-        bool $breakChainOnFailure = false,
-        int $priority = self::DEFAULT_PRIORITY
-    ): void;
-
+    public function attach_by_name(string $name, array $options = [], bool $break_chain_on_failure = false, int $priority = self::DEFAULT_PRIORITY): void;
     /**
      * Returns true if and only if $value passes all validations in the chain
      *
@@ -48,5 +34,5 @@ interface ValidatorChainInterface extends ValidatorInterface
      * @param array<array-key, mixed> $context Extra "context" to provide the validator
      */
     #[Override]
-    public function isValid(mixed $value, ?array $context = null): bool;
+    public function is_valid(mixed $value, ?array $context = null): bool;
 }

@@ -1,31 +1,23 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Laminas\Validator\File;
 
 use function array_filter;
 use function array_map;
-
 use function array_values;
 use function count;
-
 use const DIRECTORY_SEPARATOR;
-
 use function explode;
 use function file_exists;
 use function implode;
 use function is_string;
-
-use Laminas\Translator\TranslatorInterface;
-use Laminas\Validator\AbstractValidator;
-
+use Laminas\Translator\Translator_Interface;
+use Laminas\Validator\Abstract_Validator;
 use function ltrim;
 use function rtrim;
 use function sprintf;
-
 use function trim;
-
 /**
  * Validator which checks if the file already exists in the directory
  *
@@ -39,26 +31,17 @@ use function trim;
  *     valueObscured?: bool,
  * }
  */
-final class Exists extends AbstractValidator
+final class Exists extends Abstract_Validator
 {
     public const DOES_NOT_EXIST = 'fileExistsDoesNotExist';
-
     /** @var array<string, string> */
-    protected array $messageTemplates = [
-        self::DOES_NOT_EXIST => 'File does not exist',
-    ];
-
+    protected array $message_templates = [self::DOES_NOT_EXIST => 'File does not exist'];
     /** @var array<string, string|array<string, string>> */
-    protected array $messageVariables = [
-        'directory' => 'directoriesAsString',
-    ];
-
-    protected readonly string $directoriesAsString;
-
+    protected array $message_variables = ['directory' => 'directoriesAsString'];
+    protected readonly string $directories_as_string;
     /** @var list<string> */
     private readonly array $directories;
     private readonly bool $all;
-
     /**
      * Sets validator options
      *
@@ -66,74 +49,50 @@ final class Exists extends AbstractValidator
      */
     public function __construct(array $options = [])
     {
-        $this->directories         = $this->resolveDirectories($options['directory'] ?? null);
-        $this->directoriesAsString = implode(', ', $this->directories);
-        $this->all                 = $options['all'] ?? true;
-
+        $this->directories = $this->resolve_directories($options['directory'] ?? null);
+        $this->directories_as_string = implode(', ', $this->directories);
+        $this->all = $options['all'] ?? true;
         parent::__construct($options);
     }
-
     /**
      * Returns true if and only if the file already exists in the set directories
      */
-    public function isValid(mixed $value): bool
+    public function is_valid(mixed $value): bool
     {
-        if (FileInformation::isPossibleFile($value)) {
-            $file = FileInformation::factory($value);
+        if (File_Information::is_possible_file($value)) {
+            $file = File_Information::factory($value);
             if ($this->directories === []) {
                 return true;
             }
-
-            $value = $file->baseName;
+            $value = $file->base_name;
         }
-
-        $this->setValue($value);
-
-        if (! is_string($value)) {
+        $this->set_value($value);
+        if (!is_string($value)) {
             $this->error(self::DOES_NOT_EXIST);
-
             return false;
         }
-
         $count = 0;
-
         foreach ($this->directories as $directory) {
-            $path = sprintf(
-                '%s%s%s',
-                rtrim($directory, DIRECTORY_SEPARATOR),
-                DIRECTORY_SEPARATOR,
-                ltrim($value, DIRECTORY_SEPARATOR),
-            );
-
+            $path = sprintf('%s%s%s', rtrim($directory, DIRECTORY_SEPARATOR), DIRECTORY_SEPARATOR, ltrim($value, DIRECTORY_SEPARATOR));
             if (file_exists($path)) {
                 $count++;
             }
         }
-
-        if ($this->all === false && $count > 0 || ($count === count($this->directories) && $this->directories !== [])) {
+        if ($this->all === false && $count > 0 || $count === count($this->directories) && $this->directories !== []) {
             return true;
         }
-
         $this->error(self::DOES_NOT_EXIST);
-
         return false;
     }
-
     /** @return list<string> */
-    private function resolveDirectories(string|array|null $directories): array
+    private function resolve_directories(string|array|null $directories): array
     {
         if ($directories === null || $directories === [] || $directories === '') {
             return [];
         }
-
         if (is_string($directories)) {
             $directories = explode(',', $directories);
         }
-
-        return array_values(
-            array_filter(
-                array_map(trim(...), $directories)
-            )
-        );
+        return array_values(array_filter(array_map(trim(...), $directories)));
     }
 }

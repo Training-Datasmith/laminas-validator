@@ -1,40 +1,30 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Laminas\Validator;
 
 use function array_combine;
 use function array_count_values;
 use function array_map;
 use function ceil;
-
 use DateInterval;
 use DateTime;
 use DateTimeImmutable;
-
 use DateTimeInterface;
 use DateTimeZone;
-
 use function explode;
 use function floor;
 use function in_array;
 use function is_array;
 use function is_string;
-
-use Laminas\Translator\TranslatorInterface;
+use Laminas\Translator\Translator_Interface;
 use Laminas\Validator\Exception\InvalidArgumentException;
-
 use function max;
 use function min;
-
 use const PHP_INT_MAX;
-
 use function preg_match;
 use function sprintf;
-
 use function str_starts_with;
-
 /**
  * @psalm-type OptionsArgument = array{
  *     format?: string|null,
@@ -48,40 +38,31 @@ use function str_starts_with;
  *     valueObscured?: bool,
  * }
  */
-final class DateStep extends Date
+final class Date_Step extends Date
 {
     /**
      * Validity constants
      */
     public const NOT_STEP = 'dateStepNotStep';
-
     /**
      * Default format constant
      */
     public const FORMAT_DEFAULT = DateTimeInterface::ATOM;
-
     /**
      * Validation failure message template definitions
      *
      * @var array<string, string>
      */
-    protected array $messageTemplates = [
-        self::INVALID      => 'Invalid type given. String, integer, array or DateTime expected',
-        self::INVALID_DATE => 'The input does not appear to be a valid date',
-        self::FALSEFORMAT  => "The input does not fit the date format '%format%'",
-        self::NOT_STEP     => 'The input is not a valid step',
-    ];
-
+    protected array $message_templates = [self::INVALID => 'Invalid type given. String, integer, array or DateTime expected', self::INVALID_DATE => 'The input does not appear to be a valid date', self::FALSEFORMAT => "The input does not fit the date format '%format%'", self::NOT_STEP => 'The input is not a valid step'];
     /**
      * Optional base date value
      */
-    protected readonly DateTimeInterface $baseValue;
+    protected readonly DateTimeInterface $base_value;
     /**
      * Date step interval (defaults to 1 day).
      * Uses the DateInterval specification.
      */
     protected readonly DateInterval $step;
-
     /**
      * Set default options for this instance
      *
@@ -89,154 +70,117 @@ final class DateStep extends Date
      */
     public function __construct(array $options = [])
     {
-        $step      = $options['step'] ?? 'P1D';
-        $baseValue = $options['baseValue'] ?? null;
-
-        unset(
-            $options['step'],
-            $options['baseValue'],
-        );
-
+        $step = $options['step'] ?? 'P1D';
+        $base_value = $options['baseValue'] ?? null;
+        unset($options['step'], $options['baseValue']);
         parent::__construct($options);
-
-        if (! $step instanceof DateInterval) {
+        if (!$step instanceof DateInterval) {
             $step = new DateInterval($step);
         }
         $this->step = $step;
-
-        if (! $baseValue instanceof DateTimeInterface && is_string($baseValue)) {
-            $baseValue = $this->convertToDateTime($baseValue, false);
+        if (!$base_value instanceof DateTimeInterface && is_string($base_value)) {
+            $base_value = $this->convert_to_date_time($base_value, false);
         }
-
-        if (! $baseValue instanceof DateTimeInterface) {
-            $baseValue = DateTimeImmutable::createFromFormat(DateTimeInterface::ATOM, '1970-01-01T00:00:00Z');
+        if (!$base_value instanceof DateTimeInterface) {
+            $base_value = DateTimeImmutable::create_from_format(DateTimeInterface::ATOM, '1970-01-01T00:00:00Z');
         }
-
-        if ($baseValue === false) {
-            throw new InvalidArgumentException(
-                'The given base value is not in the expected format, or is an invalid date time string',
-            );
+        if ($base_value === false) {
+            throw new InvalidArgumentException('The given base value is not in the expected format, or is an invalid date time string');
         }
-
-        $this->baseValue = $baseValue;
+        $this->base_value = $base_value;
     }
-
     /**
      * Supports formats with ISO week (W) definitions
      */
-    protected function convertString(string $value, bool $addErrors = true): false|DateTimeImmutable
+    protected function convert_string(string $value, bool $add_errors = true): false|DateTimeImmutable
     {
         // Custom week format support
-        if (
-            str_starts_with($this->format, 'Y-\WW')
-            && preg_match('/^([0-9]{4})-W([0-9]{2})/', $value, $matches)
-        ) {
+        if (str_starts_with($this->format, 'Y-\WW') && preg_match('/^([0-9]{4})-W([0-9]{2})/', $value, $matches)) {
             $date = new DateTimeImmutable();
-            $date = $date->setISODate((int) $matches[1], (int) $matches[2]);
+            $date = $date->set_iso_date((int) $matches[1], (int) $matches[2]);
         } else {
-            $date = DateTimeImmutable::createFromFormat($this->format, $value, new DateTimeZone('UTC'));
+            $date = DateTimeImmutable::create_from_format($this->format, $value, new DateTimeZone('UTC'));
         }
-
         // Invalid dates can show up as warnings (ie. "2007-02-99")
         // and still return a DateTime object.
-        $errors = DateTime::getLastErrors();
+        $errors = DateTime::get_last_errors();
         if (is_array($errors) && $errors['warning_count'] > 0) {
-            if ($addErrors) {
+            if ($add_errors) {
                 $this->error(self::FALSEFORMAT);
             }
             return false;
         }
-
         return $date;
     }
-
     /**
      * Returns true if a date is within a valid step
      *
      * @throws InvalidArgumentException
      */
-    public function isValid(mixed $value): bool
+    public function is_valid(mixed $value): bool
     {
-        if (! parent::isValid($value)) {
+        if (!parent::is_valid($value)) {
             return false;
         }
-
-        $valueDate = $this->convertToDateTime($value, false); // avoid duplicate errors
-        $baseDate  = $this->convertToDateTime($this->baseValue, false);
-
-        if (false === $valueDate || false === $baseDate) {
+        $value_date = $this->convert_to_date_time($value, false);
+        // avoid duplicate errors
+        $base_date = $this->convert_to_date_time($this->base_value, false);
+        if (false === $value_date || false === $base_date) {
             return false;
         }
-
         $step = $this->step;
-
         // Same date?
         // phpcs:ignore SlevomatCodingStandard.Operators.DisallowEqualOperators.DisallowedEqualOperator
-        if ($valueDate == $baseDate) {
+        if ($value_date == $base_date) {
             return true;
         }
-
         // Optimization for simple intervals.
         // Handle intervals of just one date or time unit.
-        $intervalParts = explode('|', $step->format('%y|%m|%d|%h|%i|%s'));
-        $intervalParts = array_map(intval(...), $intervalParts);
-        $partCounts    = array_count_values($intervalParts);
-
-        $unitKeys      = ['years', 'months', 'days', 'hours', 'minutes', 'seconds'];
-        $intervalParts = array_combine($unitKeys, $intervalParts);
-
+        $interval_parts = explode('|', $step->format('%y|%m|%d|%h|%i|%s'));
+        $interval_parts = array_map(intval(...), $interval_parts);
+        $part_counts = array_count_values($interval_parts);
+        $unit_keys = ['years', 'months', 'days', 'hours', 'minutes', 'seconds'];
+        $interval_parts = array_combine($unit_keys, $interval_parts);
         // Get absolute time difference to avoid special cases of missing/added time
-        $absoluteValueDate = new DateTime($valueDate->format('Y-m-d H:i:s'), new DateTimeZone('UTC'));
-        $absoluteBaseDate  = new DateTime($baseDate->format('Y-m-d H:i:s'), new DateTimeZone('UTC'));
-
-        $timeDiff  = $absoluteValueDate->diff($absoluteBaseDate, true);
-        $diffParts = array_map(intval(...), explode('|', $timeDiff->format('%y|%m|%d|%h|%i|%s')));
-        $diffParts = array_combine($unitKeys, $diffParts);
-
-        if (5 === $partCounts[0]) {
+        $absolute_value_date = new DateTime($value_date->format('Y-m-d H:i:s'), new DateTimeZone('UTC'));
+        $absolute_base_date = new DateTime($base_date->format('Y-m-d H:i:s'), new DateTimeZone('UTC'));
+        $time_diff = $absolute_value_date->diff($absolute_base_date, true);
+        $diff_parts = array_map(intval(...), explode('|', $time_diff->format('%y|%m|%d|%h|%i|%s')));
+        $diff_parts = array_combine($unit_keys, $diff_parts);
+        if (5 === $part_counts[0]) {
             // Find the unit with the non-zero interval
-            $intervalUnit = 'days';
-            $stepValue    = 1;
-            foreach ($intervalParts as $key => $value) {
+            $interval_unit = 'days';
+            $step_value = 1;
+            foreach ($interval_parts as $key => $value) {
                 if (0 !== $value) {
-                    $intervalUnit = $key;
-                    $stepValue    = $value;
+                    $interval_unit = $key;
+                    $step_value = $value;
                     break;
                 }
             }
-
             // Check date units
-            if (in_array($intervalUnit, ['years', 'months', 'days'])) {
-                switch ($intervalUnit) {
+            if (in_array($interval_unit, ['years', 'months', 'days'])) {
+                switch ($interval_unit) {
                     case 'years':
-                        if (
-                            0 === $diffParts['months'] && 0 === $diffParts['days']
-                            && 0 === $diffParts['hours'] && 0 === $diffParts['minutes']
-                            && 0 === $diffParts['seconds']
-                        ) {
-                            if (($diffParts['years'] % $stepValue) === 0) {
+                        if (0 === $diff_parts['months'] && 0 === $diff_parts['days'] && 0 === $diff_parts['hours'] && 0 === $diff_parts['minutes'] && 0 === $diff_parts['seconds']) {
+                            if ($diff_parts['years'] % $step_value === 0) {
                                 return true;
                             }
                         }
                         break;
                     case 'months':
-                        if (
-                            0 === $diffParts['days'] && 0 === $diffParts['hours']
-                            && 0 === $diffParts['minutes'] && 0 === $diffParts['seconds']
-                        ) {
-                            $months = ($diffParts['years'] * 12) + $diffParts['months'];
-                            if (($months % $stepValue) === 0) {
+                        if (0 === $diff_parts['days'] && 0 === $diff_parts['hours'] && 0 === $diff_parts['minutes'] && 0 === $diff_parts['seconds']) {
+                            $months = $diff_parts['years'] * 12 + $diff_parts['months'];
+                            if ($months % $step_value === 0) {
                                 return true;
                             }
                         }
                         break;
                     case 'days':
-                        if (
-                            0 === $diffParts['hours'] && 0 === $diffParts['minutes']
-                            && 0 === $diffParts['seconds']
-                        ) {
-                            $days = (int) $timeDiff->format('%a'); // Total days
-                            if (($days % $stepValue) === 0) {
+                        if (0 === $diff_parts['hours'] && 0 === $diff_parts['minutes'] && 0 === $diff_parts['seconds']) {
+                            $days = (int) $time_diff->format('%a');
+                            // Total days
+                            if ($days % $step_value === 0) {
                                 return true;
                             }
                         }
@@ -245,53 +189,43 @@ final class DateStep extends Date
                 $this->error(self::NOT_STEP);
                 return false;
             }
-
             // Check time units
-            if (in_array($intervalUnit, ['hours', 'minutes', 'seconds'])) {
+            if (in_array($interval_unit, ['hours', 'minutes', 'seconds'])) {
                 // Simple test if $stepValue is 1.
-                if (1 === $stepValue) {
-                    if ('hours' === $intervalUnit
-                    && 0 === $diffParts['minutes'] && 0 === $diffParts['seconds']) {
+                if (1 === $step_value) {
+                    if ('hours' === $interval_unit && 0 === $diff_parts['minutes'] && 0 === $diff_parts['seconds']) {
                         return true;
                     }
-                    if ('minutes' === $intervalUnit && 0 === $diffParts['seconds']) {
+                    if ('minutes' === $interval_unit && 0 === $diff_parts['seconds']) {
                         return true;
                     }
-                    if ('seconds' === $intervalUnit) {
+                    if ('seconds' === $interval_unit) {
                         return true;
                     }
-
                     $this->error(self::NOT_STEP);
-
                     return false;
                 }
-
                 // Simple test for same day, when using default baseDate
-                if (
-                    $baseDate->format('Y-m-d') === $valueDate->format('Y-m-d')
-                    && $baseDate->format('Y-m-d') === '1970-01-01'
-                ) {
-                    switch ($intervalUnit) {
+                if ($base_date->format('Y-m-d') === $value_date->format('Y-m-d') && $base_date->format('Y-m-d') === '1970-01-01') {
+                    switch ($interval_unit) {
                         case 'hours':
-                            if (0 === $diffParts['minutes'] && 0 === $diffParts['seconds']) {
-                                if (($diffParts['hours'] % $stepValue) === 0) {
+                            if (0 === $diff_parts['minutes'] && 0 === $diff_parts['seconds']) {
+                                if ($diff_parts['hours'] % $step_value === 0) {
                                     return true;
                                 }
                             }
                             break;
                         case 'minutes':
-                            if (0 === $diffParts['seconds']) {
-                                $minutes = ($diffParts['hours'] * 60) + $diffParts['minutes'];
-                                if (($minutes % $stepValue) === 0) {
+                            if (0 === $diff_parts['seconds']) {
+                                $minutes = $diff_parts['hours'] * 60 + $diff_parts['minutes'];
+                                if ($minutes % $step_value === 0) {
                                     return true;
                                 }
                             }
                             break;
                         case 'seconds':
-                            $seconds = ($diffParts['hours'] * 60 * 60)
-                                       + ($diffParts['minutes'] * 60)
-                                       + $diffParts['seconds'];
-                            if (($seconds % $stepValue) === 0) {
+                            $seconds = $diff_parts['hours'] * 60 * 60 + $diff_parts['minutes'] * 60 + $diff_parts['seconds'];
+                            if ($seconds % $step_value === 0) {
                                 return true;
                             }
                             break;
@@ -301,10 +235,8 @@ final class DateStep extends Date
                 }
             }
         }
-
-        return $this->fallbackIncrementalIterationLogic($baseDate, $valueDate, $intervalParts, $diffParts, $step);
+        return $this->fallback_incremental_iteration_logic($base_date, $value_date, $interval_parts, $diff_parts, $step);
     }
-
     /**
      * Fall back to slower (but accurate) method for complex intervals.
      * Keep adding steps to the base date until a match is found
@@ -319,94 +251,66 @@ final class DateStep extends Date
      * @param int[] $diffParts
      * @throws InvalidArgumentException
      */
-    private function fallbackIncrementalIterationLogic(
-        DateTimeInterface $baseDate,
-        DateTimeInterface $valueDate,
-        array $intervalParts,
-        array $diffParts,
-        DateInterval $step
-    ): bool {
-        [$minSteps, $requiredIterations] = $this->computeMinStepAndRequiredIterations($intervalParts, $diffParts);
-        $minimumInterval                 = $this->computeMinimumInterval($intervalParts, $minSteps);
-        $isIncrementalStepping           = $baseDate < $valueDate;
-
-        if ($baseDate instanceof DateTime) {
-            $baseDate = DateTimeImmutable::createFromMutable($baseDate);
+    private function fallback_incremental_iteration_logic(DateTimeInterface $base_date, DateTimeInterface $value_date, array $interval_parts, array $diff_parts, DateInterval $step): bool
+    {
+        [$min_steps, $required_iterations] = $this->compute_min_step_and_required_iterations($interval_parts, $diff_parts);
+        $minimum_interval = $this->compute_minimum_interval($interval_parts, $min_steps);
+        $is_incremental_stepping = $base_date < $value_date;
+        if ($base_date instanceof DateTime) {
+            $base_date = DateTimeImmutable::create_from_mutable($base_date);
         }
-
-        for ($offsetIterations = 0; $offsetIterations < $requiredIterations; $offsetIterations += 1) {
-            if ($isIncrementalStepping) {
-                $baseDate = $baseDate->add($minimumInterval);
+        for ($offset_iterations = 0; $offset_iterations < $required_iterations; $offset_iterations += 1) {
+            if ($is_incremental_stepping) {
+                $base_date = $base_date->add($minimum_interval);
             } else {
-                $baseDate = $baseDate->sub($minimumInterval);
+                $base_date = $base_date->sub($minimum_interval);
             }
         }
-
-        while (
-            ($isIncrementalStepping && $baseDate < $valueDate)
-            || (! $isIncrementalStepping && $baseDate > $valueDate)
-        ) {
-            if ($isIncrementalStepping) {
-                $baseDate = $baseDate->add($step);
+        while ($is_incremental_stepping && $base_date < $value_date || !$is_incremental_stepping && $base_date > $value_date) {
+            if ($is_incremental_stepping) {
+                $base_date = $base_date->add($step);
             } else {
-                $baseDate = $baseDate->sub($step);
+                $base_date = $base_date->sub($step);
             }
-
             // phpcs:ignore SlevomatCodingStandard.Operators.DisallowEqualOperators.DisallowedEqualOperator
-            if ($baseDate == $valueDate) {
+            if ($base_date == $value_date) {
                 return true;
             }
         }
-
         $this->error(self::NOT_STEP);
-
         return false;
     }
-
     /**
      * Computes minimum interval to use for iterations while checking steps
      *
      * @param int[] $intervalParts
      * @param int|float $minSteps
      */
-    private function computeMinimumInterval(array $intervalParts, $minSteps): DateInterval
+    private function compute_minimum_interval(array $interval_parts, $min_steps): DateInterval
     {
-        return new DateInterval(sprintf(
-            'P%dY%dM%dDT%dH%dM%dS',
-            $intervalParts['years'] * $minSteps,
-            $intervalParts['months'] * $minSteps,
-            $intervalParts['days'] * $minSteps,
-            $intervalParts['hours'] * $minSteps,
-            $intervalParts['minutes'] * $minSteps,
-            $intervalParts['seconds'] * $minSteps
-        ));
+        return new DateInterval(sprintf('P%dY%dM%dDT%dH%dM%dS', $interval_parts['years'] * $min_steps, $interval_parts['months'] * $min_steps, $interval_parts['days'] * $min_steps, $interval_parts['hours'] * $min_steps, $interval_parts['minutes'] * $min_steps, $interval_parts['seconds'] * $min_steps));
     }
-
     /**
      * @param int[] $intervalParts
      * @param int[] $diffParts
      * @return int[] (ordered tuple containing minimum steps and required step iterations
      * @psalm-return array{0: int, 1: int}
      */
-    private function computeMinStepAndRequiredIterations(array $intervalParts, array $diffParts): array
+    private function compute_min_step_and_required_iterations(array $interval_parts, array $diff_parts): array
     {
-        $minSteps = $this->computeMinSteps($intervalParts, $diffParts);
-
+        $min_steps = $this->compute_min_steps($interval_parts, $diff_parts);
         // If we use PHP_INT_MAX DateInterval::__construct falls over with a bad format error
         // before we reach the max on 64 bit machines
-        $maxInteger = min(2 ** 31, PHP_INT_MAX);
+        $max_integer = min(2 ** 31, PHP_INT_MAX);
         // check for integer overflow and split $minimum interval if needed
-        $maximumInterval        = max($intervalParts);
-        $requiredStepIterations = 1;
-
-        if (($minSteps * $maximumInterval) > $maxInteger) {
-            $requiredStepIterations = ceil(($minSteps * $maximumInterval) / $maxInteger);
-            $minSteps               = floor($minSteps / $requiredStepIterations);
+        $maximum_interval = max($interval_parts);
+        $required_step_iterations = 1;
+        if ($min_steps * $maximum_interval > $max_integer) {
+            $required_step_iterations = ceil($min_steps * $maximum_interval / $max_integer);
+            $min_steps = floor($min_steps / $required_step_iterations);
         }
-
-        return [(int) $minSteps, $minSteps !== 0 ? (int) $requiredStepIterations : 0];
+        return [(int) $min_steps, $min_steps !== 0 ? (int) $required_step_iterations : 0];
     }
-
     /**
      * Multiply the step interval by the lower bound of steps to reach the target
      *
@@ -414,44 +318,29 @@ final class DateStep extends Date
      * @param int[] $diffParts
      * @return float|int
      */
-    private function computeMinSteps(array $intervalParts, array $diffParts)
+    private function compute_min_steps(array $interval_parts, array $diff_parts)
     {
-        $intervalMaxSeconds = $this->computeIntervalMaxSeconds($intervalParts);
-
-        return 0 === $intervalMaxSeconds
-            ? 0
-            : max(floor($this->computeDiffMinSeconds($diffParts) / $intervalMaxSeconds) - 1, 0);
+        $interval_max_seconds = $this->compute_interval_max_seconds($interval_parts);
+        return 0 === $interval_max_seconds ? 0 : max(floor($this->compute_diff_min_seconds($diff_parts) / $interval_max_seconds) - 1, 0);
     }
-
     /**
      * Get upper bound of the given interval in seconds
      * Converts a given `$intervalParts` array into seconds
      *
      * @param int[] $intervalParts
      */
-    private function computeIntervalMaxSeconds(array $intervalParts): int
+    private function compute_interval_max_seconds(array $interval_parts): int
     {
-        return ($intervalParts['years'] * 60 * 60 * 24 * 366)
-            + ($intervalParts['months'] * 60 * 60 * 24 * 31)
-            + ($intervalParts['days'] * 60 * 60 * 24)
-            + ($intervalParts['hours'] * 60 * 60)
-            + ($intervalParts['minutes'] * 60)
-            + $intervalParts['seconds'];
+        return $interval_parts['years'] * 60 * 60 * 24 * 366 + $interval_parts['months'] * 60 * 60 * 24 * 31 + $interval_parts['days'] * 60 * 60 * 24 + $interval_parts['hours'] * 60 * 60 + $interval_parts['minutes'] * 60 + $interval_parts['seconds'];
     }
-
     /**
      * Get lower bound of difference in secondss
      * Converts a given `$diffParts` array into seconds
      *
      * @param int[] $diffParts
      */
-    private function computeDiffMinSeconds(array $diffParts): int
+    private function compute_diff_min_seconds(array $diff_parts): int
     {
-        return ($diffParts['years'] * 60 * 60 * 24 * 365)
-            + ($diffParts['months'] * 60 * 60 * 24 * 28)
-            + ($diffParts['days'] * 60 * 60 * 24)
-            + ($diffParts['hours'] * 60 * 60)
-            + ($diffParts['minutes'] * 60)
-            + $diffParts['seconds'];
+        return $diff_parts['years'] * 60 * 60 * 24 * 365 + $diff_parts['months'] * 60 * 60 * 24 * 28 + $diff_parts['days'] * 60 * 60 * 24 + $diff_parts['hours'] * 60 * 60 + $diff_parts['minutes'] * 60 + $diff_parts['seconds'];
     }
 }

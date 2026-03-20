@@ -1,30 +1,25 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Laminas\Validator\Barcode;
 
 use function is_numeric;
 use function strlen;
-
-final class Gtin13 implements AdapterInterface
+final class Gtin13 implements Adapter_Interface
 {
-    public function hasValidLength(string $value): bool
+    public function has_valid_length(string $value): bool
     {
         return strlen($value) === 13;
     }
-
-    public function hasValidCharacters(string $value): bool
+    public function has_valid_characters(string $value): bool
     {
         return is_numeric($value);
     }
-
-    public function hasValidChecksum(string $value): bool
+    public function has_valid_checksum(string $value): bool
     {
         return Util::gtin($value);
     }
-
-    public function getLength(): int
+    public function get_length(): int
     {
         return 13;
     }

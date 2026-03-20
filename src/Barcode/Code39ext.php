@@ -1,27 +1,23 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Laminas\Validator\Barcode;
 
-final class Code39ext implements AdapterInterface
+final class Code39ext implements Adapter_Interface
 {
-    public function hasValidLength(string $value): bool
+    public function has_valid_length(string $value): bool
     {
         return true;
     }
-
-    public function hasValidCharacters(string $value): bool
+    public function has_valid_characters(string $value): bool
     {
-        return Util::isAscii128($value);
+        return Util::is_ascii128($value);
     }
-
-    public function hasValidChecksum(string $value): bool
+    public function has_valid_checksum(string $value): bool
     {
         return true;
     }
-
-    public function getLength(): int
+    public function get_length(): int
     {
         return -1;
     }

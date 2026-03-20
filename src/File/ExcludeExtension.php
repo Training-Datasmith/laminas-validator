@@ -1,17 +1,13 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Laminas\Validator\File;
 
 use function assert;
 use function implode;
-
 use function is_string;
-
-use Laminas\Translator\TranslatorInterface;
-use Laminas\Validator\AbstractValidator;
-
+use Laminas\Translator\Translator_Interface;
+use Laminas\Validator\Abstract_Validator;
 /**
  * Validator for the excluding file extensions
  *
@@ -26,26 +22,17 @@ use Laminas\Validator\AbstractValidator;
  *     valueObscured?: bool,
  * }
  */
-final class ExcludeExtension extends AbstractValidator
+final class Exclude_Extension extends Abstract_Validator
 {
-    public const FALSE_EXTENSION    = 'fileExcludeExtensionFalse';
-    public const NOT_FOUND          = 'fileExcludeExtensionNotFound';
+    public const FALSE_EXTENSION = 'fileExcludeExtensionFalse';
+    public const NOT_FOUND = 'fileExcludeExtensionNotFound';
     public const ERROR_INVALID_TYPE = 'fileExcludeExtensionInvalidType';
-
     /** @var array<string, string> */
-    protected array $messageTemplates = [
-        self::FALSE_EXTENSION    => 'File has an incorrect extension',
-        self::NOT_FOUND          => 'File is not readable or does not exist',
-        self::ERROR_INVALID_TYPE => 'The value is neither a file, nor a string',
-    ];
-
+    protected array $message_templates = [self::FALSE_EXTENSION => 'File has an incorrect extension', self::NOT_FOUND => 'File is not readable or does not exist', self::ERROR_INVALID_TYPE => 'The value is neither a file, nor a string'];
     /** @var array<string, string|array<string, string>> */
-    protected array $messageVariables = [
-        'extension' => 'extensionList',
-    ];
-
-    private readonly bool $caseSensitive;
-    private readonly bool $allowNonExistentFile;
+    protected array $message_variables = ['extension' => 'extensionList'];
+    private readonly bool $case_sensitive;
+    private readonly bool $allow_non_existent_file;
     /** @var non-empty-list<non-empty-string> */
     private readonly array $extensions;
     /**
@@ -53,8 +40,7 @@ final class ExcludeExtension extends AbstractValidator
      *
      * @var non-empty-string
      */
-    protected readonly string $extensionList;
-
+    protected readonly string $extension_list;
     /**
      * Sets validator options
      *
@@ -62,56 +48,42 @@ final class ExcludeExtension extends AbstractValidator
      */
     public function __construct(array $options)
     {
-        $this->caseSensitive        = $options['case'] ?? false;
-        $this->allowNonExistentFile = $options['allowNonExistentFile'] ?? false;
-        $this->extensions           = Extension::resolveExtensionList($options['extension'] ?? []);
-        $this->extensionList        = implode(', ', $this->extensions);
-
+        $this->case_sensitive = $options['case'] ?? false;
+        $this->allow_non_existent_file = $options['allowNonExistentFile'] ?? false;
+        $this->extensions = Extension::resolve_extension_list($options['extension'] ?? []);
+        $this->extension_list = implode(', ', $this->extensions);
         unset($options['case'], $options['allowNonExistentFile'], $options['extension']);
-
         parent::__construct($options);
     }
-
     /**
      * Returns true if and only if the file extension of $value is not included in the
      * set extension list
      */
-    public function isValid(mixed $value): bool
+    public function is_valid(mixed $value): bool
     {
-        $this->setValue($value);
-        $isFile = FileInformation::isPossibleFile($value);
-
-        if (! $isFile && ! $this->allowNonExistentFile) {
+        $this->set_value($value);
+        $is_file = File_Information::is_possible_file($value);
+        if (!$is_file && !$this->allow_non_existent_file) {
             $this->error(self::NOT_FOUND);
-
             return false;
         }
-
-        if (! $isFile && ! is_string($value) || $value === '') {
+        if (!$is_file && !is_string($value) || $value === '') {
             $this->error(self::ERROR_INVALID_TYPE);
-
             return false;
         }
-
-        if ($isFile) {
-            $file     = FileInformation::factory($value);
-            $fileName = $file->clientFileName ?? $file->baseName;
+        if ($is_file) {
+            $file = File_Information::factory($value);
+            $file_name = $file->client_file_name ?? $file->base_name;
         } else {
-            $fileName = $value;
+            $file_name = $value;
         }
-
-        assert($fileName !== '');
-
-        $this->value = $fileName;
-
-        $extensions = Extension::listPossibleFileNameExtensions($fileName);
-
-        if (Extension::extensionFoundInList($this->extensions, $extensions, $this->caseSensitive)) {
+        assert($file_name !== '');
+        $this->value = $file_name;
+        $extensions = Extension::list_possible_file_name_extensions($file_name);
+        if (Extension::extension_found_in_list($this->extensions, $extensions, $this->case_sensitive)) {
             $this->error(self::FALSE_EXTENSION);
-
             return false;
         }
-
         return true;
     }
 }

@@ -1,22 +1,17 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Laminas\Validator\File;
 
 use function hash_algos;
 use function hash_equals;
 use function hash_file;
-
 use function in_array;
 use function is_string;
-
-use Laminas\Translator\TranslatorInterface;
-use Laminas\Validator\AbstractValidator;
+use Laminas\Translator\Translator_Interface;
+use Laminas\Validator\Abstract_Validator;
 use Laminas\Validator\Exception\InvalidArgumentException;
-
 use function strtolower;
-
 /**
  * Validator for the hash of given files
  *
@@ -30,23 +25,16 @@ use function strtolower;
  *     valueObscured?: bool,
  * }
  */
-final class Hash extends AbstractValidator
+final class Hash extends Abstract_Validator
 {
     public const DOES_NOT_MATCH = 'fileHashDoesNotMatch';
-    public const NOT_DETECTED   = 'fileHashHashNotDetected';
-    public const NOT_FOUND      = 'fileHashNotFound';
-
+    public const NOT_DETECTED = 'fileHashHashNotDetected';
+    public const NOT_FOUND = 'fileHashNotFound';
     /** @var array<string, string> */
-    protected array $messageTemplates = [
-        self::DOES_NOT_MATCH => 'File does not match the given hashes',
-        self::NOT_DETECTED   => 'A hash could not be evaluated for the given file',
-        self::NOT_FOUND      => 'File is not readable or does not exist',
-    ];
-
+    protected array $message_templates = [self::DOES_NOT_MATCH => 'File does not match the given hashes', self::NOT_DETECTED => 'A hash could not be evaluated for the given file', self::NOT_FOUND => 'File is not readable or does not exist'];
     /** @var list<non-empty-string> */
     private readonly array $hash;
     private readonly string $algorithm;
-
     /**
      * Sets validator options
      *
@@ -58,59 +46,43 @@ final class Hash extends AbstractValidator
         if (is_string($hash)) {
             $hash = [$hash];
         }
-
         if ($hash === []) {
-            throw new InvalidArgumentException(
-                'Files cannot be validated without a hash specified',
-            );
+            throw new InvalidArgumentException('Files cannot be validated without a hash specified');
         }
-
         $algorithm = strtolower($options['algorithm'] ?? 'crc32');
-        if (! in_array($algorithm, hash_algos(), true)) {
+        if (!in_array($algorithm, hash_algos(), true)) {
             throw new InvalidArgumentException("Unknown algorithm '{$algorithm}'");
         }
-
-        $this->hash      = $hash;
+        $this->hash = $hash;
         $this->algorithm = $algorithm;
-
         unset($options['hash'], $options['algorithm']);
-
         parent::__construct($options);
     }
-
     /**
      * Returns true if and only if the given file confirms the set hash
      */
-    public function isValid(mixed $value): bool
+    public function is_valid(mixed $value): bool
     {
-        if (! FileInformation::isPossibleFile($value)) {
+        if (!File_Information::is_possible_file($value)) {
             $this->error(self::NOT_FOUND);
-
             return false;
         }
-
-        $file = FileInformation::factory($value);
-
-        if (! $file->readable) {
+        $file = File_Information::factory($value);
+        if (!$file->readable) {
             $this->error(self::NOT_FOUND);
-
             return false;
         }
-
-        $this->setValue($file->clientFileName ?? $file->baseName);
-
+        $this->set_value($file->client_file_name ?? $file->base_name);
         $hash = hash_file($this->algorithm, $file->path);
         if ($hash === false) {
             $this->error(self::NOT_DETECTED);
             return false;
         }
-
-        foreach ($this->hash as $knownHash) {
-            if (hash_equals($knownHash, $hash)) {
+        foreach ($this->hash as $known_hash) {
+            if (hash_equals($known_hash, $hash)) {
                 return true;
             }
         }
-
         $this->error(self::DOES_NOT_MATCH);
         return false;
     }

@@ -1,24 +1,17 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Laminas\Validator;
 
 use function assert;
-
 use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
-
 use function get_debug_type;
-
 use function is_string;
-
-use Laminas\Translator\TranslatorInterface;
+use Laminas\Translator\Translator_Interface;
 use Laminas\Validator\Exception\InvalidArgumentException;
-
 use function preg_match;
-
 /**
  * @psalm-type OptionsArgument = array{
  *     min?: string|DateTimeInterface|null,
@@ -33,190 +26,133 @@ use function preg_match;
  *     valueObscured?: bool,
  * }
  */
-final class DateComparison extends AbstractValidator
+final class Date_Comparison extends Abstract_Validator
 {
-    public const ERROR_INVALID_TYPE          = 'invalidType';
-    public const ERROR_INVALID_DATE          = 'invalidDate';
+    public const ERROR_INVALID_TYPE = 'invalidType';
+    public const ERROR_INVALID_DATE = 'invalidDate';
     public const ERROR_NOT_GREATER_INCLUSIVE = 'notGreaterInclusive';
-    public const ERROR_NOT_GREATER           = 'notGreater';
-    public const ERROR_NOT_LESS_INCLUSIVE    = 'notLessInclusive';
-    public const ERROR_NOT_LESS              = 'notLess';
-
+    public const ERROR_NOT_GREATER = 'notGreater';
+    public const ERROR_NOT_LESS_INCLUSIVE = 'notLessInclusive';
+    public const ERROR_NOT_LESS = 'notLess';
     /** @var array<string, string> */
-    protected array $messageTemplates = [
-        self::ERROR_INVALID_TYPE          => 'Expected a string or a date time instance but received "%type"',
-        self::ERROR_INVALID_DATE          => 'Invalid date provided',
-        self::ERROR_NOT_GREATER_INCLUSIVE => 'A date equal to or after %min% is required',
-        self::ERROR_NOT_GREATER           => 'A date after %min% is required',
-        self::ERROR_NOT_LESS_INCLUSIVE    => 'A date equal to or before %max% is required',
-        self::ERROR_NOT_LESS              => 'A date before %max% is required',
-    ];
-
+    protected array $message_templates = [self::ERROR_INVALID_TYPE => 'Expected a string or a date time instance but received "%type"', self::ERROR_INVALID_DATE => 'Invalid date provided', self::ERROR_NOT_GREATER_INCLUSIVE => 'A date equal to or after %min% is required', self::ERROR_NOT_GREATER => 'A date after %min% is required', self::ERROR_NOT_LESS_INCLUSIVE => 'A date equal to or before %max% is required', self::ERROR_NOT_LESS => 'A date before %max% is required'];
     /** @var array<string, string|array<string, string>> */
-    protected array $messageVariables = [
-        'type' => 'type',
-        'min'  => 'minString',
-        'max'  => 'maxString',
-    ];
-
+    protected array $message_variables = ['type' => 'type', 'min' => 'minString', 'max' => 'maxString'];
     private readonly ?DateTimeInterface $min;
     private readonly ?DateTimeInterface $max;
-    private readonly bool $inclusiveMin;
-    private readonly bool $inclusiveMax;
-    private readonly ?string $inputFormat;
-
+    private readonly bool $inclusive_min;
+    private readonly bool $inclusive_max;
+    private readonly ?string $input_format;
     /** Input type used in message variables */
-    protected ?string $type      = null;
-    protected ?string $minString = null;
-    protected ?string $maxString = null;
-
+    protected ?string $type = null;
+    protected ?string $min_string = null;
+    protected ?string $max_string = null;
     /** @param OptionsArgument $options */
     public function __construct(array $options = [])
     {
         parent::__construct($options);
-
-        $this->min          = $this->dateInstanceBound($options['min'] ?? null);
-        $this->max          = $this->dateInstanceBound($options['max'] ?? null);
-        $this->inclusiveMin = $options['inclusiveMin'] ?? true;
-        $this->inclusiveMax = $options['inclusiveMax'] ?? true;
-        $this->inputFormat  = $options['inputFormat'] ?? null;
-
+        $this->min = $this->date_instance_bound($options['min'] ?? null);
+        $this->max = $this->date_instance_bound($options['max'] ?? null);
+        $this->inclusive_min = $options['inclusiveMin'] ?? true;
+        $this->inclusive_max = $options['inclusiveMax'] ?? true;
+        $this->input_format = $options['inputFormat'] ?? null;
         if ($this->min === null && $this->max === null) {
-            throw new InvalidArgumentException(
-                'At least one date boundary must be supplied',
-            );
+            throw new InvalidArgumentException('At least one date boundary must be supplied');
         }
-
-        $outputFormat = $this->inputFormat ?? 'jS F Y H:i:s';
-
+        $output_format = $this->input_format ?? 'jS F Y H:i:s';
         if ($this->min !== null) {
-            $this->minString = $this->min->format($outputFormat);
+            $this->min_string = $this->min->format($output_format);
         }
-
         if ($this->max !== null) {
-            $this->maxString = $this->max->format($outputFormat);
+            $this->max_string = $this->max->format($output_format);
         }
     }
-
-    public function isValid(mixed $value): bool
+    public function is_valid(mixed $value): bool
     {
         $this->type = get_debug_type($value);
-        $this->setValue($value);
-
-        if (! is_string($value) && ! $value instanceof DateTimeInterface) {
+        $this->set_value($value);
+        if (!is_string($value) && !$value instanceof DateTimeInterface) {
             $this->error(self::ERROR_INVALID_TYPE);
-
             return false;
         }
-
-        $date = $this->valueToDate($value);
+        $date = $this->value_to_date($value);
         if ($date === null) {
             $this->error(self::ERROR_INVALID_DATE);
-
             return false;
         }
-
-        if ($this->min !== null && $this->inclusiveMin && $date < $this->min) {
+        if ($this->min !== null && $this->inclusive_min && $date < $this->min) {
             $this->error(self::ERROR_NOT_GREATER_INCLUSIVE);
-
             return false;
         }
-
-        if ($this->min !== null && ! $this->inclusiveMin && $date <= $this->min) {
+        if ($this->min !== null && !$this->inclusive_min && $date <= $this->min) {
             $this->error(self::ERROR_NOT_GREATER);
-
             return false;
         }
-
-        if ($this->max !== null && $this->inclusiveMax && $date > $this->max) {
+        if ($this->max !== null && $this->inclusive_max && $date > $this->max) {
             $this->error(self::ERROR_NOT_LESS_INCLUSIVE);
-
             return false;
         }
-
-        if ($this->max !== null && ! $this->inclusiveMax && $date >= $this->max) {
+        if ($this->max !== null && !$this->inclusive_max && $date >= $this->max) {
             $this->error(self::ERROR_NOT_LESS);
-
             return false;
         }
-
         return true;
     }
-
-    private function valueToDate(string|DateTimeInterface $input): DateTimeInterface|null
+    private function value_to_date(string|DateTimeInterface $input): DateTimeInterface|null
     {
         if ($input instanceof DateTimeInterface) {
-            return $this->w3cDateFromString($input->format('Y-m-d\TH:i:s'));
+            return $this->w3c_date_from_string($input->format('Y-m-d\TH:i:s'));
         }
-
-        if ($this->inputFormat !== null) {
-            $date = DateTimeImmutable::createFromFormat($this->inputFormat, $input, new DateTimeZone('UTC'));
-
+        if ($this->input_format !== null) {
+            $date = DateTimeImmutable::create_from_format($this->input_format, $input, new DateTimeZone('UTC'));
             if ($date instanceof DateTimeImmutable) {
                 return $date;
             }
         }
-
-        $date = $this->isoDateFromString($input);
+        $date = $this->iso_date_from_string($input);
         if ($date !== null) {
             return $date;
         }
-
-        $date = $this->w3cDateFromString($input);
+        $date = $this->w3c_date_from_string($input);
         if ($date !== null) {
             return $date;
         }
-
         return null;
     }
-
-    private function dateInstanceBound(string|DateTimeInterface|null $dateTime): DateTimeInterface|null
+    private function date_instance_bound(string|DateTimeInterface|null $date_time): DateTimeInterface|null
     {
-        if ($dateTime instanceof DateTimeInterface) {
-            return $this->w3cDateFromString($dateTime->format('Y-m-d\TH:i:s'));
+        if ($date_time instanceof DateTimeInterface) {
+            return $this->w3c_date_from_string($date_time->format('Y-m-d\TH:i:s'));
         }
-
-        if ($dateTime === null) {
+        if ($date_time === null) {
             return null;
         }
-
-        $date = $this->isoDateFromString($dateTime);
+        $date = $this->iso_date_from_string($date_time);
         if ($date !== null) {
             return $date;
         }
-
-        $date = $this->w3cDateFromString($dateTime);
+        $date = $this->w3c_date_from_string($date_time);
         if ($date !== null) {
             return $date;
         }
-
-        throw new InvalidArgumentException(
-            'Min/max date bounds must be either DateTime instances, or a string in one of the formats: '
-            . '"Y-m-d" for a date or "Y-m-d\TH:i:s" for date time',
-        );
+        throw new InvalidArgumentException('Min/max date bounds must be either DateTime instances, or a string in one of the formats: ' . '"Y-m-d" for a date or "Y-m-d\TH:i:s" for date time');
     }
-
-    private function isoDateFromString(string $input): DateTimeImmutable|null
+    private function iso_date_from_string(string $input): DateTimeImmutable|null
     {
-        if (! preg_match('/^\d{4}-[0-1]\d\-[0-3]\d$/', $input)) {
+        if (!preg_match('/^\d{4}-[0-1]\d\-[0-3]\d$/', $input)) {
             return null;
         }
-
-        $date = DateTimeImmutable::createFromFormat('!Y-m-d', $input, new DateTimeZone('UTC'));
+        $date = DateTimeImmutable::create_from_format('!Y-m-d', $input, new DateTimeZone('UTC'));
         assert($date !== false);
-
         return $date;
     }
-
-    private function w3cDateFromString(string $input): DateTimeImmutable|null
+    private function w3c_date_from_string(string $input): DateTimeImmutable|null
     {
-        if (! preg_match('/^\d{4}-[0-1]\d\-[0-3]\dT\d{1,2}:[0-5]\d:[0-5]\d$/', $input)) {
+        if (!preg_match('/^\d{4}-[0-1]\d\-[0-3]\dT\d{1,2}:[0-5]\d:[0-5]\d$/', $input)) {
             return null;
         }
-
-        $date = DateTimeImmutable::createFromFormat('Y-m-d\TH:i:s', $input, new DateTimeZone('UTC'));
+        $date = DateTimeImmutable::create_from_format('Y-m-d\TH:i:s', $input, new DateTimeZone('UTC'));
         assert($date !== false);
-
         return $date;
     }
 }

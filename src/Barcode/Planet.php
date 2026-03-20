@@ -1,33 +1,27 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Laminas\Validator\Barcode;
 
 use function in_array;
 use function is_numeric;
 use function strlen;
-
-final class Planet implements AdapterInterface
+final class Planet implements Adapter_Interface
 {
     private const LENGTH = [12, 14];
-
-    public function hasValidLength(string $value): bool
+    public function has_valid_length(string $value): bool
     {
         return in_array(strlen($value), self::LENGTH, true);
     }
-
-    public function hasValidCharacters(string $value): bool
+    public function has_valid_characters(string $value): bool
     {
         return is_numeric($value);
     }
-
-    public function hasValidChecksum(string $value): bool
+    public function has_valid_checksum(string $value): bool
     {
         return Util::postnet($value);
     }
-
-    public function getLength(): array
+    public function get_length(): array
     {
         return self::LENGTH;
     }

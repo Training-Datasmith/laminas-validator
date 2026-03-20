@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Laminas\Validator\Translator;
 
-use Laminas\Translator\TranslatorInterface;
-
-interface TranslatorAwareInterface
+use Laminas\Translator\Translator_Interface;
+interface Translator_Aware_Interface
 {
     /**
      * Sets translator to use in helper
@@ -16,10 +14,9 @@ interface TranslatorAwareInterface
      * @param  string|null $textDomain  [optional] text domain
      *             Default is null, which skips setTranslatorTextDomain
      */
-    public function setTranslator(?TranslatorInterface $translator = null, ?string $textDomain = null): void;
-
+    public function set_translator(?Translator_Interface $translator = null, ?string $text_domain = null): void;
     /**
      * Returns translator used in object
      */
-    public function getTranslator(): ?TranslatorInterface;
+    public function get_translator(): ?Translator_Interface;
 }

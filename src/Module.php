@@ -1,11 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Laminas\Validator;
 
-use Laminas\ServiceManager\ServiceManager;
-
+use Laminas\Service_Manager\Service_Manager;
 /**
  * @psalm-import-type ServiceManagerConfiguration from ServiceManager
  * @final
@@ -18,12 +16,9 @@ class Module
      * @return array[]
      * @psalm-return array{service_manager: ServiceManagerConfiguration}
      */
-    public function getConfig(): array
+    public function get_config(): array
     {
-        $provider = new ConfigProvider();
-
-        return [
-            'service_manager' => $provider->getDependencyConfig(),
-        ];
+        $provider = new Config_Provider();
+        return ['service_manager' => $provider->get_dependency_config()];
     }
 }

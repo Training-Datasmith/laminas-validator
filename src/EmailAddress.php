@@ -1,14 +1,11 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Laminas\Validator;
 
 use function array_combine;
 use function array_filter;
-
 use const ARRAY_FILTER_USE_BOTH;
-
 use function array_flip;
 use function array_key_exists;
 use function array_keys;
@@ -17,22 +14,15 @@ use function checkdnsrr;
 use function gethostbynamel;
 use function getmxrr;
 use function idn_to_ascii;
-
 use const INTL_IDNA_VARIANT_UTS46;
-
 use function is_array;
 use function is_string;
-
-use Laminas\Translator\TranslatorInterface;
-
+use Laminas\Translator\Translator_Interface;
 use function preg_match;
 use function str_contains;
 use function strlen;
-
 use function trim;
-
-use UConverter;
-
+use U_Converter;
 /**
  * @psalm-type Options = array{
  *     useMxCheck?: bool,
@@ -48,50 +38,30 @@ use UConverter;
  *     valueObscured?: bool,
  * }
  */
-final class EmailAddress extends AbstractValidator
+final class Email_Address extends Abstract_Validator
 {
-    public const INVALID            = 'emailAddressInvalid';
-    public const INVALID_FORMAT     = 'emailAddressInvalidFormat';
-    public const INVALID_HOSTNAME   = 'emailAddressInvalidHostname';
-    public const INVALID_MX_RECORD  = 'emailAddressInvalidMxRecord';
-    public const INVALID_SEGMENT    = 'emailAddressInvalidSegment';
-    public const DOT_ATOM           = 'emailAddressDotAtom';
-    public const QUOTED_STRING      = 'emailAddressQuotedString';
+    public const INVALID = 'emailAddressInvalid';
+    public const INVALID_FORMAT = 'emailAddressInvalidFormat';
+    public const INVALID_HOSTNAME = 'emailAddressInvalidHostname';
+    public const INVALID_MX_RECORD = 'emailAddressInvalidMxRecord';
+    public const INVALID_SEGMENT = 'emailAddressInvalidSegment';
+    public const DOT_ATOM = 'emailAddressDotAtom';
+    public const QUOTED_STRING = 'emailAddressQuotedString';
     public const INVALID_LOCAL_PART = 'emailAddressInvalidLocalPart';
-    public const LENGTH_EXCEEDED    = 'emailAddressLengthExceeded';
-
+    public const LENGTH_EXCEEDED = 'emailAddressLengthExceeded';
     // phpcs:disable Generic.Files.LineLength.TooLong
-
     /** @var array<string, string> */
-    protected array $messageTemplates = [
-        self::INVALID            => 'Invalid type given. String expected',
-        self::INVALID_FORMAT     => 'The input is not a valid email address. Use the basic format local-part@hostname',
-        self::INVALID_HOSTNAME   => "'%hostname%' is not a valid hostname for the email address",
-        self::INVALID_MX_RECORD  => "'%hostname%' does not appear to have any valid MX or A records for the email address",
-        self::INVALID_SEGMENT    => "'%hostname%' is not in a routable network segment. The email address should not be resolved from public network",
-        self::DOT_ATOM           => "'%localPart%' can not be matched against dot-atom format",
-        self::QUOTED_STRING      => "'%localPart%' can not be matched against quoted-string format",
-        self::INVALID_LOCAL_PART => "'%localPart%' is not a valid local part for the email address",
-        self::LENGTH_EXCEEDED    => 'The input exceeds the allowed length',
-    ];
-
+    protected array $message_templates = [self::INVALID => 'Invalid type given. String expected', self::INVALID_FORMAT => 'The input is not a valid email address. Use the basic format local-part@hostname', self::INVALID_HOSTNAME => "'%hostname%' is not a valid hostname for the email address", self::INVALID_MX_RECORD => "'%hostname%' does not appear to have any valid MX or A records for the email address", self::INVALID_SEGMENT => "'%hostname%' is not in a routable network segment. The email address should not be resolved from public network", self::DOT_ATOM => "'%localPart%' can not be matched against dot-atom format", self::QUOTED_STRING => "'%localPart%' can not be matched against quoted-string format", self::INVALID_LOCAL_PART => "'%localPart%' is not a valid local part for the email address", self::LENGTH_EXCEEDED => 'The input exceeds the allowed length'];
     // phpcs:enable
-
     /** @var array<string, string|array<string, string>> */
-    protected array $messageVariables = [
-        'hostname'  => 'hostname',
-        'localPart' => 'localPart',
-    ];
-
-    protected ?string $hostname  = null;
-    protected ?string $localPart = null;
-
-    private readonly Hostname $hostnameValidator;
-    private readonly bool $useMxCheck;
-    private readonly bool $useDeepMxCheck;
-    private readonly bool $useDomainCheck;
+    protected array $message_variables = ['hostname' => 'hostname', 'localPart' => 'localPart'];
+    protected ?string $hostname = null;
+    protected ?string $local_part = null;
+    private readonly Hostname $hostname_validator;
+    private readonly bool $use_mx_check;
+    private readonly bool $use_deep_mx_check;
+    private readonly bool $use_domain_check;
     private readonly bool $strict;
-
     /**
      * Instantiates hostname validator for local use
      *
@@ -106,231 +76,172 @@ final class EmailAddress extends AbstractValidator
      */
     public function __construct(array $options = [])
     {
-        $messages         = $options['messages'] ?? [];
-        $hostnameMessages = array_filter(
-            $messages,
-            fn (string $value, string $key): bool => ! array_key_exists($key, $this->messageTemplates),
-            ARRAY_FILTER_USE_BOTH,
-        );
-        $messages         = array_filter(
-            $messages,
-            fn (string $value, string $key): bool => array_key_exists($key, $this->messageTemplates),
-            ARRAY_FILTER_USE_BOTH,
-        );
-
-        $allow                   = $options['allow'] ?? Hostname::ALLOW_DNS;
-        $this->hostnameValidator = $options['hostnameValidator'] ?? new Hostname([
-            'allow'    => $allow,
-            'messages' => $hostnameMessages,
-        ]);
-        $this->useMxCheck        = $options['useMxCheck'] ?? false;
-        $this->useDeepMxCheck    = $options['useDeepMxCheck'] ?? false;
-        $this->useDomainCheck    = $options['useDomainCheck'] ?? true;
-        $this->strict            = $options['strict'] ?? true;
-
-        unset(
-            $options['allow'],
-            $options['hostnameValidator'],
-            $options['useMxCheck'],
-            $options['useDeepMxCheck'],
-            $options['useDomainCheck'],
-            $options['strict'],
-        );
-
+        $messages = $options['messages'] ?? [];
+        $hostname_messages = array_filter($messages, fn(string $value, string $key): bool => !array_key_exists($key, $this->message_templates), ARRAY_FILTER_USE_BOTH);
+        $messages = array_filter($messages, fn(string $value, string $key): bool => array_key_exists($key, $this->message_templates), ARRAY_FILTER_USE_BOTH);
+        $allow = $options['allow'] ?? Hostname::ALLOW_DNS;
+        $this->hostname_validator = $options['hostnameValidator'] ?? new Hostname(['allow' => $allow, 'messages' => $hostname_messages]);
+        $this->use_mx_check = $options['useMxCheck'] ?? false;
+        $this->use_deep_mx_check = $options['useDeepMxCheck'] ?? false;
+        $this->use_domain_check = $options['useDomainCheck'] ?? true;
+        $this->strict = $options['strict'] ?? true;
+        unset($options['allow'], $options['hostnameValidator'], $options['useMxCheck'], $options['useDeepMxCheck'], $options['useDomainCheck'], $options['strict']);
         $options['messages'] = $messages;
-
         parent::__construct($options);
     }
-
     /**
      * Overrides `setMessage` of AbstractValidator so that messages propagate to the composed hostname validator
      *
      * @inheritDoc
      */
-    public function setMessage(string $messageString, ?string $messageKey = null): void
+    public function set_message(string $message_string, ?string $message_key = null): void
     {
-        if ($messageKey === null) {
-            $this->hostnameValidator->setMessage($messageString);
-            parent::setMessage($messageString);
+        if ($message_key === null) {
+            $this->hostname_validator->set_message($message_string);
+            parent::set_message($message_string);
         }
-
-        if (! isset($this->messageTemplates[$messageKey])) {
-            $this->hostnameValidator->setMessage($messageString, $messageKey);
+        if (!isset($this->message_templates[$message_key])) {
+            $this->hostname_validator->set_message($message_string, $message_key);
         } else {
-            parent::setMessage($messageString, $messageKey);
+            parent::set_message($message_string, $message_key);
         }
     }
-
     /**
      * Returns whether the given host is a reserved IP, or a hostname that resolves to a reserved IP
      */
-    private function isReserved(string $host): bool
+    private function is_reserved(string $host): bool
     {
-        $validator = new HostWithPublicIPv4Address();
-        return ! $validator->isValid($host);
+        $validator = new Host_With_Public_I_Pv4address();
+        return !$validator->is_valid($host);
     }
-
     /**
      * Internal method to validate the local part of the email address
      */
-    private function validateLocalPart(string $localPart): bool
+    private function validate_local_part(string $local_part): bool
     {
         // First try to match the local part on the common dot-atom format
-
         // Dot-atom characters are: 1*atext *("." 1*atext)
         // atext: ALPHA / DIGIT / and "!", "#", "$", "%", "&", "'", "*",
         //        "+", "-", "/", "=", "?", "^", "_", "`", "{", "|", "}", "~"
         $atext = 'a-zA-Z0-9\x21\x23\x24\x25\x26\x27\x2a\x2b\x2d\x2f\x3d\x3f\x5e\x5f\x60\x7b\x7c\x7d\x7e';
-        if (preg_match('/^[' . $atext . ']+(\x2e+[' . $atext . ']+)*$/', $localPart)) {
+        if (preg_match('/^[' . $atext . ']+(\x2e+[' . $atext . ']+)*$/', $local_part)) {
             return true;
         }
-
-        if ($this->validateInternationalizedLocalPart($localPart)) {
+        if ($this->validate_internationalized_local_part($local_part)) {
             return true;
         }
-
         // Try quoted string format (RFC 5321 Chapter 4.1.2)
-
         // Quoted-string characters are: DQUOTE *(qtext/quoted-pair) DQUOTE
-        $qtext      = '\x20-\x21\x23-\x5b\x5d-\x7e'; // %d32-33 / %d35-91 / %d93-126
-        $quotedPair = '\x20-\x7e'; // %d92 %d32-126
-        if (preg_match('/^"([' . $qtext . ']|\x5c[' . $quotedPair . '])*"$/', $localPart)) {
+        $qtext = '\x20-\x21\x23-\x5b\x5d-\x7e';
+        // %d32-33 / %d35-91 / %d93-126
+        $quoted_pair = '\x20-\x7e';
+        // %d92 %d32-126
+        if (preg_match('/^"([' . $qtext . ']|\x5c[' . $quoted_pair . '])*"$/', $local_part)) {
             return true;
         }
-
         $this->error(self::DOT_ATOM);
         $this->error(self::QUOTED_STRING);
         $this->error(self::INVALID_LOCAL_PART);
-
         return false;
     }
-
     /**
      * @param string $localPart Address local part to validate.
      */
-    protected function validateInternationalizedLocalPart(string $localPart): bool
+    protected function validate_internationalized_local_part(string $local_part): bool
     {
-        if (UConverter::transcode($localPart, 'UTF-8', 'UTF-8') === false) {
+        if (U_Converter::transcode($local_part, 'UTF-8', 'UTF-8') === false) {
             // invalid utf?
             return false;
         }
-
         $atext = 'a-zA-Z0-9\x21\x23\x24\x25\x26\x27\x2a\x2b\x2d\x2f\x3d\x3f\x5e\x5f\x60\x7b\x7c\x7d\x7e';
         // RFC 6532 extends atext to include non-ascii utf
         // @see https://tools.ietf.org/html/rfc6532#section-3.1
         $uatext = $atext . '\x{80}-\x{FFFF}';
-        return (bool) preg_match('/^[' . $uatext . ']+(\x2e+[' . $uatext . ']+)*$/u', $localPart);
+        return (bool) preg_match('/^[' . $uatext . ']+(\x2e+[' . $uatext . ']+)*$/u', $local_part);
     }
-
     /**
      * Internal method to validate the servers MX records
      */
-    protected function validateMXRecords(string $hostname): bool
+    protected function validate_mx_records(string $hostname): bool
     {
-        $mxHosts  = [];
-        $weight   = [];
-        $mxRecord = [];
-        $result   = getmxrr($hostname, $mxHosts, $weight);
-
+        $mx_hosts = [];
+        $weight = [];
+        $mx_record = [];
+        $result = getmxrr($hostname, $mx_hosts, $weight);
         if ($result) {
-            $mxRecord = array_combine($mxHosts, $weight) ?: [];
-            arsort($mxRecord);
+            $mx_record = array_combine($mx_hosts, $weight) ?: [];
+            arsort($mx_record);
         }
-
         // Fallback to IPv4 hosts if no MX record found (RFC 2821 SS 5).
-        if (! $result) {
+        if (!$result) {
             $result = gethostbynamel($hostname);
             if (is_array($result)) {
-                $mxRecord = array_flip($result);
+                $mx_record = array_flip($result);
             }
         }
-
         if ($result === false) {
             $this->error(self::INVALID_MX_RECORD);
             return false;
         }
-
-        if (! $this->useDeepMxCheck) {
+        if (!$this->use_deep_mx_check) {
             return true;
         }
-
-        $validAddress = false;
-        $reserved     = true;
-        foreach (array_keys($mxRecord) as $mxHost) {
-            $res = $this->isReserved($mxHost);
-            if (! $res) {
+        $valid_address = false;
+        $reserved = true;
+        foreach (array_keys($mx_record) as $mx_host) {
+            $res = $this->is_reserved($mx_host);
+            if (!$res) {
                 $reserved = false;
             }
-
-            if (trim($mxHost) === '') {
+            if (trim($mx_host) === '') {
                 continue;
             }
-
-            if (
-                ! $res
-                && (checkdnsrr($mxHost, 'A')
-                || checkdnsrr($mxHost, 'AAAA')
-                || checkdnsrr($mxHost, 'A6'))
-            ) {
-                $validAddress = true;
+            if (!$res && (checkdnsrr($mx_host, 'A') || checkdnsrr($mx_host, 'AAAA') || checkdnsrr($mx_host, 'A6'))) {
+                $valid_address = true;
                 break;
             }
         }
-
-        if (! $validAddress) {
+        if (!$valid_address) {
             $error = $reserved ? self::INVALID_SEGMENT : self::INVALID_MX_RECORD;
             $this->error($error);
-
             return false;
         }
-
         return true;
     }
-
     /**
      * Internal method to validate the hostname part of the email address
      */
-    private function validateHostnamePart(string $hostname): bool
+    private function validate_hostname_part(string $hostname): bool
     {
-        $this->hostnameValidator->setTranslator($this->getTranslator());
-        $isValid = $this->hostnameValidator->isValid($hostname);
-        if (! $isValid) {
+        $this->hostname_validator->set_translator($this->get_translator());
+        $is_valid = $this->hostname_validator->is_valid($hostname);
+        if (!$is_valid) {
             $this->error(self::INVALID_HOSTNAME);
             // Get messages and errors from hostnameValidator
-            foreach ($this->hostnameValidator->getMessages() as $code => $message) {
-                $this->errorMessages[$code] = $message;
+            foreach ($this->hostname_validator->get_messages() as $code => $message) {
+                $this->error_messages[$code] = $message;
             }
             return false;
         }
-        if ($this->useMxCheck) {
+        if ($this->use_mx_check) {
             // MX check on hostname
-            return $this->validateMXRecords($hostname);
+            return $this->validate_mx_records($hostname);
         }
-
-        return $isValid;
+        return $is_valid;
     }
-
     /**
      * Splits the given value in hostname and local part of the email address
      *
      * @return array{localPart: string, hostname: string}|false Returns false when the email can not be split
      */
-    private static function splitEmailParts(string $value): array|false
+    private static function split_email_parts(string $value): array|false
     {
         // Split email address up and disallow '..'
-        if (
-            str_contains($value, '..')
-            || ! preg_match('/^(.+)@([^@]+)$/', $value, $matches)
-        ) {
+        if (str_contains($value, '..') || !preg_match('/^(.+)@([^@]+)$/', $value, $matches)) {
             return false;
         }
-
-        return [
-            'localPart' => $matches[1],
-            'hostname'  => self::idnToAscii($matches[2]),
-        ];
+        return ['localPart' => $matches[1], 'hostname' => self::idn_to_ascii($matches[2])];
     }
-
     /**
      * Defined by Laminas\Validator\ValidatorInterface
      *
@@ -340,54 +251,44 @@ final class EmailAddress extends AbstractValidator
      * @link   http://www.ietf.org/rfc/rfc2822.txt RFC2822
      * @link   http://www.columbia.edu/kermit/ascii.html US-ASCII characters
      */
-    public function isValid(mixed $value): bool
+    public function is_valid(mixed $value): bool
     {
-        if (! is_string($value)) {
+        if (!is_string($value)) {
             $this->error(self::INVALID);
             return false;
         }
-
         $length = true;
-        $this->setValue($value);
-
+        $this->set_value($value);
         // Split email address up and disallow '..'
-        $split = self::splitEmailParts($value);
+        $split = self::split_email_parts($value);
         if ($split === false) {
             $this->error(self::INVALID_FORMAT);
             return false;
         }
-
-        ['localPart' => $localPart, 'hostname' => $hostname] = $split;
-
-        $this->localPart = $localPart;
-        $this->hostname  = $hostname;
-
-        if ($this->strict && (strlen($localPart) > 64) || (strlen($hostname) > 255)) {
+        ['localPart' => $local_part, 'hostname' => $hostname] = $split;
+        $this->local_part = $local_part;
+        $this->hostname = $hostname;
+        if ($this->strict && strlen($local_part) > 64 || strlen($hostname) > 255) {
             $length = false;
             $this->error(self::LENGTH_EXCEEDED);
         }
-
         // Match hostname part
-        $hostnameValid = false;
-        if ($this->useDomainCheck) {
-            $hostnameValid = $this->validateHostnamePart($hostname);
+        $hostname_valid = false;
+        if ($this->use_domain_check) {
+            $hostname_valid = $this->validate_hostname_part($hostname);
         }
-
-        $local = $this->validateLocalPart($localPart);
-
+        $local = $this->validate_local_part($local_part);
         // If both parts valid, return true
-        return ($local && $length) && (! $this->useDomainCheck || $hostnameValid !== false);
+        return $local && $length && (!$this->use_domain_check || $hostname_valid !== false);
     }
-
     /**
      * Safely convert UTF-8 encoded domain name to ASCII
      *
      * @param string $hostname the UTF-8 encoded email
      */
-    private static function idnToAscii(string $hostname): string
+    private static function idn_to_ascii(string $hostname): string
     {
         $value = idn_to_ascii($hostname, 0, INTL_IDNA_VARIANT_UTS46);
-
         return $value !== false ? $value : $hostname;
     }
 }

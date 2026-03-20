@@ -1,16 +1,12 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Laminas\Validator\File;
 
 use function is_array;
-
-use Laminas\Translator\TranslatorInterface;
-use Laminas\Validator\AbstractValidator;
-
+use Laminas\Translator\Translator_Interface;
+use Laminas\Validator\Abstract_Validator;
 use Laminas\Validator\Exception\InvalidArgumentException;
-
 /**
  * Validator for counting all given files
  *
@@ -24,30 +20,18 @@ use Laminas\Validator\Exception\InvalidArgumentException;
  *     valueObscured?: bool,
  * }
  */
-final class Count extends AbstractValidator
+final class Count extends Abstract_Validator
 {
-    public const TOO_MANY        = 'fileCountTooMany';
-    public const TOO_FEW         = 'fileCountTooFew';
+    public const TOO_MANY = 'fileCountTooMany';
+    public const TOO_FEW = 'fileCountTooFew';
     public const ERROR_NOT_ARRAY = 'fileListNotCountable';
-
     /** @var array<string, string> */
-    protected array $messageTemplates = [
-        self::TOO_MANY        => "Too many files, maximum '%max%' are allowed but '%count%' are given",
-        self::TOO_FEW         => "Too few files, minimum '%min%' are expected but '%count%' are given",
-        self::ERROR_NOT_ARRAY => 'Invalid type provided. The file list must an array.',
-    ];
-
+    protected array $message_templates = [self::TOO_MANY => "Too many files, maximum '%max%' are allowed but '%count%' are given", self::TOO_FEW => "Too few files, minimum '%min%' are expected but '%count%' are given", self::ERROR_NOT_ARRAY => 'Invalid type provided. The file list must an array.'];
     /** @var array<string, string|array<string, string>> */
-    protected array $messageVariables = [
-        'min'   => 'min',
-        'max'   => 'max',
-        'count' => 'count',
-    ];
-
+    protected array $message_variables = ['min' => 'min', 'max' => 'max', 'count' => 'count'];
     protected int $count;
     protected readonly int|null $min;
     protected readonly int|null $max;
-
     /**
      * Sets validator options
      *
@@ -57,60 +41,44 @@ final class Count extends AbstractValidator
     {
         $min = $options['min'] ?? 0;
         $max = $options['max'] ?? null;
-
         if ($max !== null && $min > $max) {
-            throw new InvalidArgumentException(
-                'The `min` option cannot exceed the `max` option',
-            );
+            throw new InvalidArgumentException('The `min` option cannot exceed the `max` option');
         }
-
         $this->count = 0;
-        $this->min   = $min;
-        $this->max   = $max;
-
+        $this->min = $min;
+        $this->max = $max;
         unset($options['min'], $options['max']);
-
         parent::__construct($options);
     }
-
     /**
      * Returns true if and only if the file count of all checked files is at least min and
      * not bigger than max (when max is not null).
      */
-    public function isValid(mixed $value): bool
+    public function is_valid(mixed $value): bool
     {
-        if (FileInformation::isPossibleFile($value)) {
+        if (File_Information::is_possible_file($value)) {
             $value = [$value];
         }
-
-        if (! is_array($value)) {
+        if (!is_array($value)) {
             $this->error(self::ERROR_NOT_ARRAY);
-
             return false;
         }
-
         $this->count = 0;
         /** @psalm-var mixed $item */
         foreach ($value as $item) {
-            if (! FileInformation::isPossibleFile($item)) {
+            if (!File_Information::is_possible_file($item)) {
                 continue;
             }
-
             $this->count++;
         }
-
         if ($this->min !== null && $this->count < $this->min) {
             $this->error(self::TOO_FEW);
-
             return false;
         }
-
         if ($this->max !== null && $this->count > $this->max) {
             $this->error(self::TOO_MANY);
-
             return false;
         }
-
         return true;
     }
 }

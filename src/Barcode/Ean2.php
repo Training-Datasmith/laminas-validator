@@ -1,30 +1,25 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Laminas\Validator\Barcode;
 
 use function strlen;
-
 /** @psalm-import-type AllowedLength from AdapterInterface */
-final class Ean2 implements AdapterInterface
+final class Ean2 implements Adapter_Interface
 {
-    public function hasValidLength(string $value): bool
+    public function has_valid_length(string $value): bool
     {
         return strlen($value) === 2;
     }
-
-    public function hasValidCharacters(string $value): bool
+    public function has_valid_characters(string $value): bool
     {
-        return Util::stringMatchesAlphabet($value, '0123456789');
+        return Util::string_matches_alphabet($value, '0123456789');
     }
-
-    public function hasValidChecksum(string $value): bool
+    public function has_valid_checksum(string $value): bool
     {
         return true;
     }
-
-    public function getLength(): int
+    public function get_length(): int
     {
         return 2;
     }

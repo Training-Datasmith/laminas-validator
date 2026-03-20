@@ -1,20 +1,15 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Laminas\Validator;
 
 use function floor;
-
 use function is_numeric;
-
-use Laminas\Translator\TranslatorInterface;
-
+use Laminas\Translator\Translator_Interface;
 use function round;
 use function strlen;
 use function strpos;
 use function substr;
-
 /**
  * @psalm-type OptionsArgument = array{
  *     baseValue?: numeric,
@@ -26,20 +21,14 @@ use function substr;
  *     valueObscured?: bool,
  * }
  */
-final class Step extends AbstractValidator
+final class Step extends Abstract_Validator
 {
-    public const INVALID  = 'typeInvalid';
+    public const INVALID = 'typeInvalid';
     public const NOT_STEP = 'stepInvalid';
-
     /** @var array<string, string> */
-    protected array $messageTemplates = [
-        self::INVALID  => 'Invalid value given. Scalar expected',
-        self::NOT_STEP => 'The input is not a valid step',
-    ];
-
-    private readonly float $baseValue;
+    protected array $message_templates = [self::INVALID => 'Invalid value given. Scalar expected', self::NOT_STEP => 'The input is not a valid step'];
+    private readonly float $base_value;
     private readonly float $step;
-
     /**
      * Set default options for this instance
      *
@@ -49,44 +38,29 @@ final class Step extends AbstractValidator
     {
         $base = $options['baseValue'] ?? null;
         $step = $options['step'] ?? null;
-
-        $this->baseValue = is_numeric($base)
-            ? (float) $base
-            : 0.0;
-
-        $this->step = is_numeric($step)
-            ? (float) $step
-            : 1.0;
-
+        $this->base_value = is_numeric($base) ? (float) $base : 0.0;
+        $this->step = is_numeric($step) ? (float) $step : 1.0;
         unset($options['baseValue'], $options['step']);
-
         parent::__construct($options);
     }
-
     /**
      * Returns true if $value is numeric and a valid step value
      */
-    public function isValid(mixed $value): bool
+    public function is_valid(mixed $value): bool
     {
-        if (! is_numeric($value)) {
+        if (!is_numeric($value)) {
             $this->error(self::INVALID);
             return false;
         }
-
-        $this->setValue($value);
-
-        $subtract = $this->sub((float) $value, $this->baseValue);
-
+        $this->set_value($value);
+        $subtract = $this->sub((float) $value, $this->base_value);
         $fmod = $this->fmod($subtract, $this->step);
-
         if ($fmod !== 0.0 && $fmod !== $this->step) {
             $this->error(self::NOT_STEP);
             return false;
         }
-
         return true;
     }
-
     /**
      * replaces the internal fmod function which give wrong results on many cases
      */
@@ -95,30 +69,22 @@ final class Step extends AbstractValidator
         if ($y === 0.0) {
             return 1.0;
         }
-
         // find the maximum precision from both input params to give accurate results
-        $precision = $this->getPrecision($x) + $this->getPrecision($y);
-
+        $precision = $this->get_precision($x) + $this->get_precision($y);
         return round($x - $y * floor($x / $y), $precision);
     }
-
     /**
      * replaces the internal subtraction operation which give wrong results on some cases
      */
     private function sub(float $x, float $y): float
     {
-        $precision = $this->getPrecision($x) + $this->getPrecision($y);
-
+        $precision = $this->get_precision($x) + $this->get_precision($y);
         return round($x - $y, $precision);
     }
-
-    private function getPrecision(float $float): int
+    private function get_precision(float $float): int
     {
         $position = strpos((string) $float, '.');
-        $segment  = $position === false
-            ? null
-            : substr((string) $float, $position + 1);
-
+        $segment = $position === false ? null : substr((string) $float, $position + 1);
         return $segment !== null ? strlen($segment) : 0;
     }
 }

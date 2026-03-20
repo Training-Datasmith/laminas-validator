@@ -1,63 +1,50 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Laminas\Validator\Barcode;
 
 use function assert;
 use function chr;
-
 use function is_string;
-
-use Laminas\Stdlib\StringUtils;
-use Laminas\Stdlib\StringWrapper\StringWrapperInterface;
-
+use Laminas\Stdlib\String_Utils;
+use Laminas\Stdlib\String_Wrapper\String_Wrapper_Interface;
 use function ord;
-
-final readonly class Code128 implements AdapterInterface
+final readonly class Code128 implements Adapter_Interface
 {
-    private StringWrapperInterface $utf8StringWrapper;
-
+    private String_Wrapper_Interface $utf8string_wrapper;
     public function __construct()
     {
-        $this->utf8StringWrapper = StringUtils::getWrapper('UTF-8');
+        $this->utf8string_wrapper = String_Utils::get_wrapper('UTF-8');
     }
-
-    public function hasValidLength(string $value): bool
+    public function has_valid_length(string $value): bool
     {
         return true;
     }
-
-    public function hasValidChecksum(string $value): bool
+    public function has_valid_checksum(string $value): bool
     {
         return $this->code128($value);
     }
-
-    public function getLength(): int
+    public function get_length(): int
     {
         return -1;
     }
-
     /**
      * Checks for allowed characters within the barcode
      */
-    public function hasValidCharacters(string $value): bool
+    public function has_valid_characters(string $value): bool
     {
         // get used string wrapper for UTF-8 character encoding
-        $strWrapper = $this->utf8StringWrapper;
-
+        $str_wrapper = $this->utf8string_wrapper;
         // detect starting charset
-        $set  = $this->getCodingSet($value);
+        $set = $this->get_coding_set($value);
         $read = $set;
         if ($set !== '') {
-            $value = $strWrapper->substr($value, 1, null);
+            $value = $str_wrapper->substr($value, 1, null);
         }
-
         // process barcode
         while ($value !== '' && $value !== false) {
-            $char = $strWrapper->substr($value, 0, 1);
+            $char = $str_wrapper->substr($value, 0, 1);
             assert(is_string($char));
-
             switch ($char) {
                 // Function definition
                 case 'Ç':
@@ -65,62 +52,51 @@ final readonly class Code128 implements AdapterInterface
                 case 'å':
                 case 'é':
                     break;
-
-                    // Switch to C
+                // Switch to C
                 case 'â':
                     $set = 'C';
                     break;
-
-                    // Switch to B
+                // Switch to B
                 case 'ä':
                     $set = 'B';
                     break;
-
-                    // Switch to A
+                // Switch to A
                 case 'à':
                     $set = 'A';
                     break;
-
-                    // Doubled start character
+                // Doubled start character
                 case '‡':
                 case 'ˆ':
                 case '‰':
                     return false;
-
-                    // Chars after the stop character
+                // Chars after the stop character
                 case 'Š':
                     break 2;
-
                 default:
                     // Does the char exist within the charset to read?
                     if ($this->ord128($char, $read) === -1) {
                         return false;
                     }
-
                     break;
             }
-
-            $value = $strWrapper->substr($value, 1, null);
-            $read  = $set;
+            $value = $str_wrapper->substr($value, 1, null);
+            $read = $set;
         }
-
-        if ($value !== '' && is_string($value) && $strWrapper->strlen($value) !== 1) {
+        if ($value !== '' && is_string($value) && $str_wrapper->strlen($value) !== 1) {
             return false;
         }
-
         return true;
     }
-
     /**
      * Validates the checksum
      */
     private function code128(string $value): bool
     {
-        $pos        = 1;
-        $set        = $this->getCodingSet($value);
-        $read       = $set;
-        $strWrapper = $this->utf8StringWrapper;
-        $char       = $strWrapper->substr($value, 0, 1);
+        $pos = 1;
+        $set = $this->get_coding_set($value);
+        $read = $set;
+        $str_wrapper = $this->utf8string_wrapper;
+        $char = $str_wrapper->substr($value, 0, 1);
         if ($char === '‡') {
             $sum = 103;
         } elseif ($char === 'ˆ') {
@@ -131,16 +107,14 @@ final readonly class Code128 implements AdapterInterface
             // no start value, unable to detect a proper checksum
             return false;
         }
-
-        $value = $strWrapper->substr($value, 1, null);
+        $value = $str_wrapper->substr($value, 1, null);
         assert($value !== false);
-        while ($strWrapper->strpos($value, 'Š') !== false || ($value !== '')) {
-            $char = $strWrapper->substr($value, 0, 1);
+        while ($str_wrapper->strpos($value, 'Š') !== false || $value !== '') {
+            $char = $str_wrapper->substr($value, 0, 1);
             if ($read === 'C') {
-                $char = $strWrapper->substr($value, 0, 2);
+                $char = $str_wrapper->substr($value, 0, 2);
             }
             assert($char !== false);
-
             switch ($char) {
                 // Function definition
                 case 'Ç':
@@ -149,70 +123,58 @@ final readonly class Code128 implements AdapterInterface
                 case 'é':
                     $sum += $pos * $this->ord128($char, $set);
                     break;
-
-                    // Switch to C
+                // Switch to C
                 case 'â':
                     $sum += $pos * $this->ord128($char, $set);
-                    $set  = 'C';
+                    $set = 'C';
                     break;
-
-                    // Switch to B
+                // Switch to B
                 case 'ä':
                     $sum += $pos * $this->ord128($char, $set);
-                    $set  = 'B';
+                    $set = 'B';
                     break;
-
-                    // Switch to A
+                // Switch to A
                 case 'à':
                     $sum += $pos * $this->ord128($char, $set);
-                    $set  = 'A';
+                    $set = 'A';
                     break;
-
                 case '‡':
                 case 'ˆ':
                 case '‰':
                     return false;
-
                 default:
                     // Does the char exist within the charset to read?
                     if ($this->ord128($char, $read) === -1) {
                         return false;
                     }
-
                     $sum += $pos * $this->ord128($char, $set);
                     break;
             }
-
-            $value = $strWrapper->substr($value, 1);
+            $value = $str_wrapper->substr($value, 1);
             assert($value !== false);
             ++$pos;
-            if (($strWrapper->strpos($value, 'Š') === 1) && ($strWrapper->strlen($value) === 2)) {
+            if ($str_wrapper->strpos($value, 'Š') === 1 && $str_wrapper->strlen($value) === 2) {
                 // break by stop and checksum char
                 break;
             }
             $read = $set;
         }
-
-        if (($strWrapper->strpos($value, 'Š') !== 1) || ($strWrapper->strlen($value) !== 2)) {
+        if ($str_wrapper->strpos($value, 'Š') !== 1 || $str_wrapper->strlen($value) !== 2) {
             // return false if checksum is not readable and true if no startvalue is detected
             return false;
         }
-
         $mod = $sum % 103;
-        if ($strWrapper->substr($value, 0, 1) === $this->chr128($mod, $set)) {
+        if ($str_wrapper->substr($value, 0, 1) === $this->chr128($mod, $set)) {
             return true;
         }
-
         return false;
     }
-
     /**
      * Returns the coding set for a barcode
      */
-    private function getCodingSet(string $value): string
+    private function get_coding_set(string $value): string
     {
-        $value = $this->utf8StringWrapper->substr($value, 0, 1);
-
+        $value = $this->utf8string_wrapper->substr($value, 0, 1);
         return match ($value) {
             '‡' => 'A',
             'ˆ' => 'B',
@@ -220,7 +182,6 @@ final readonly class Code128 implements AdapterInterface
             default => '',
         };
     }
-
     /**
      * Internal method to return the code128 integer from an ascii value
      *
@@ -265,10 +226,10 @@ final readonly class Code128 implements AdapterInterface
         }
         if ($set === 'C') {
             $val = (int) $value;
-            if (($val >= 0) && ($val <= 99)) {
+            if ($val >= 0 && $val <= 99) {
                 return $val;
             }
-            if (($ord >= 132) && ($ord <= 138)) {
+            if ($ord >= 132 && $ord <= 138) {
                 return $ord - 32;
             }
             return -1;
@@ -281,7 +242,6 @@ final readonly class Code128 implements AdapterInterface
         }
         return -1;
     }
-
     /**
      * Internal Method to return the ascii value from a code128 integer
      *
@@ -321,7 +281,7 @@ final readonly class Code128 implements AdapterInterface
             return chr($value + 32);
         }
         if ($set === 'C') {
-            if (($value >= 0) && ($value <= 9)) {
+            if ($value >= 0 && $value <= 9) {
                 return '0' . $value;
             }
             if ($value <= 99) {

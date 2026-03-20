@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Laminas\Validator;
 
 /**
@@ -12,7 +11,7 @@ namespace Laminas\Validator;
  *     options?: array<string, mixed>,
  * }
  */
-interface ValidatorInterface
+interface Validator_Interface
 {
     /**
      * Returns true if and only if $value meets the validation requirements
@@ -23,8 +22,7 @@ interface ValidatorInterface
      *
      * @throws Exception\RuntimeException If validation of $value is impossible.
      */
-    public function isValid(mixed $value): bool;
-
+    public function is_valid(mixed $value): bool;
     /**
      * Returns an array of messages that explain why the most recent isValid()
      * call returned false. The array keys are validation failure message identifiers,
@@ -35,5 +33,5 @@ interface ValidatorInterface
      *
      * @return array<string, string>
      */
-    public function getMessages();
+    public function get_messages();
 }

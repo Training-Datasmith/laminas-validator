@@ -1,15 +1,11 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Laminas\Validator;
 
 use Closure;
-
 use function is_callable;
-
 use Laminas\Validator\Exception\InvalidArgumentException;
-
 /**
  * @psalm-import-type ValidatorSpecification from ValidatorInterface
  * @psalm-type OptionsArgument = array{
@@ -17,37 +13,32 @@ use Laminas\Validator\Exception\InvalidArgumentException;
  *     validators: array<array-key, ValidatorSpecification>,
  * }
  */
-final readonly class Conditional implements ValidatorInterface
+final readonly class Conditional implements Validator_Interface
 {
     /** @var Closure(array<string, mixed>): bool */
     private Closure $rule;
-    private ValidatorChainInterface $chain;
-
+    private Validator_Chain_Interface $chain;
     /** @param OptionsArgument $options */
-    public function __construct(ValidatorChainFactory $chainFactory, array $options)
+    public function __construct(Validator_Chain_Factory $chain_factory, array $options)
     {
         $rule = $options['rule'] ?? null;
-        if (! is_callable($rule)) {
+        if (!is_callable($rule)) {
             throw new InvalidArgumentException('The `rule` option must be callable');
         }
-
-        $this->rule  = ($rule)(...);
-        $this->chain = $chainFactory->fromArray($options['validators']);
+        $this->rule = $rule(...);
+        $this->chain = $chain_factory->from_array($options['validators']);
     }
-
     /** @param array<string, mixed> $context */
-    public function isValid(mixed $value, array $context = []): bool
+    public function is_valid(mixed $value, array $context = []): bool
     {
-        if (! ($this->rule)($context)) {
+        if (!($this->rule)($context)) {
             return true;
         }
-
-        return $this->chain->isValid($value, $context);
+        return $this->chain->is_valid($value, $context);
     }
-
     /** @inheritDoc */
-    public function getMessages(): array
+    public function get_messages(): array
     {
-        return $this->chain->getMessages();
+        return $this->chain->get_messages();
     }
 }
