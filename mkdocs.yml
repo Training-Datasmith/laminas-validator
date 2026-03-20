@@ -138,7 +138,7 @@ repo_url: 'https://github.com/laminas/laminas-validator'
 extra:
     project: Components
     installation:
-        config_provider_class: 'Laminas\Validator\ConfigProvider'
+        config_provider_class: 'Laminas\Validator\Config_Provider'
         module_class: 'Laminas\Validator\Module'
     current_version: v3
     versions:
